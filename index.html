@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FPP Nusantara Museum Tour</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-900 m-0 overflow-hidden relative">
+    <div id="blocker" class="absolute inset-0 bg-black/50 z-[99]">
+      <div
+        id="instructions"
+        class="absolute inset-0 bg-black/80 text-white flex flex-col justify-center items-center text-center font-sans z-[100]"
+      >
+        <h1 class="text-3xl font-bold">Welcome to FPP Nusantara Museum Tour</h1>
+        <h2 class="text-2xl mb-4 mt-2">Click to Start</h2>
+
+        <p class="text-xl mb-2">Controls:</p>
+        <p class="text-lg">WASD to Move</p>
+        <p class="text-lg">Mouse to Look Around</p>
+        <p class="text-lg">ESC to exit (and lock cursor again to re-enter)</p>
+      </div>
+    </div>
+
+    <div
+      id="crosshair"
+      class="absolute top-1/2 left-1/2 w-[5px] h-[5px] -mt-[2.5px] -ml-[2.5px] bg-white rounded-full z-10"
+    ></div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
