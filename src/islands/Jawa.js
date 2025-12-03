@@ -3,7 +3,7 @@ import { createBlock } from "../utils/createBlock.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export function createJawa() {
-  const jawaBlock = createBlock("Jawa", 0x1a237e);
+  const jawaBlock = createBlock("Jawa");
 
   // Decorations for Jawa: display cases with kendang, keris, and saron.
   const zPositions = [35, 0, -35];
@@ -86,13 +86,16 @@ export function createJawa() {
 
   // Apply curtain texture to the floor mesh of the Jawa block
   const textureLoader = new THREE.TextureLoader();
-  const curtainTexture = textureLoader.load("./src/assets/jawa_floor_texture.jpg", (tex) => {
-    tex.flipY = false;
-    tex.encoding = THREE.sRGBEncoding;
-    tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(4, 8);
-  });
+  const curtainTexture = textureLoader.load(
+    "./src/assets/jawa_floor_texture.jpg",
+    (tex) => {
+      tex.flipY = false;
+      tex.encoding = THREE.sRGBEncoding;
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(4, 8);
+    }
+  );
 
   jawaBlock.traverse((child) => {
     if (child.isMesh && child.userData && child.userData.isWalkable) {
