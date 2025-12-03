@@ -46,7 +46,7 @@ export function createSumatra() {
   );
 
   textureLoader.load(
-    "./src/assets/jawa_floor_texture.jpg",
+    "./src/assets/floor_texture.jpg",
     (floorTexture) => {
       floorTexture.flipY = false;
       floorTexture.encoding = THREE.sRGBEncoding;

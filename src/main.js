@@ -16,8 +16,15 @@ import { createSeparatorJawaKalimantan } from "./separators/SeparatorJawaKaliman
 import { createSeparatorKalimantanSulawesi } from "./separators/SeparatorKalimantanSulawesi.js";
 import { createSeparatorSulawesiPapua } from "./separators/SeparatorSulawesiPapua.js";
 
+import { showModal, hideModal } from "./ui/modal.js";
+
 let camera, scene, renderer, controller;
 const clock = new THREE.Clock();
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let clickableMeshes = [];
+let allCollidableMeshes = [];
 
 function init() {
   const container = document.body;
@@ -28,7 +35,9 @@ function init() {
 
   window.addEventListener("resize", onWindowResize, false);
 
-  const allCollidableMeshes = composeMuseum(scene);
+  renderer.domElement.addEventListener("mousedown", onMouseDown, false);
+
+  allCollidableMeshes = composeMuseum(scene, clickableMeshes);
 
   controller = new FPSController(
     camera,
@@ -37,15 +46,33 @@ function init() {
   );
   scene.add(controller.controls.getObject());
 
+  const instructions = document.getElementById("instructions");
+  const blocker = document.getElementById("blocker");
+
+  controller.controls.addEventListener("lock", function () {
+    blocker.style.display = "none";
+    controller.enabled = true;
+  });
+
+  controller.controls.addEventListener("unlock", function () {
+    blocker.style.display = "flex";
+    controller.enabled = false;
+  });
+
+  instructions.addEventListener("click", function () {
+    controller.controls.lock();
+  });
+
   animate();
 }
 
 /**
  * Composes the entire museum structure, positioning each block.
  * @param {THREE.Scene} scene - The main Three.js scene.
+ * @param {Array<THREE.Mesh>} clickableMeshes - Array to store interactive meshes.
  * @returns {Array<THREE.Mesh>} An array of meshes that should be used for collision detection.
  */
-function composeMuseum(scene) {
+function composeMuseum(scene, clickableMeshes) {
   const collidableMeshes = [];
 
   const blockCreators = [
@@ -64,7 +91,7 @@ function composeMuseum(scene) {
   ];
 
   blockCreators.forEach(({ name, creator }) => {
-    const block = creator();
+    const block = creator(clickableMeshes);
 
     const { x, y, z } = POSITIONS[name];
     block.position.set(x, y, z);
@@ -72,7 +99,7 @@ function composeMuseum(scene) {
     scene.add(block);
 
     block.children.forEach((child) => {
-      if (child.geometry.type === "BoxGeometry") {
+      if (child.geometry && child.geometry.type === "BoxGeometry") {
         collidableMeshes.push(child);
       }
     });
@@ -122,11 +149,46 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function onMouseDown() {
+  if (!controller || !controller.enabled) {
+    return;
+  }
+
+  mouse.x = 0;
+  mouse.y = 0;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(clickableMeshes, true);
+
+  const clickableHit = intersects.find((i) => i.object.userData.isClickable);
+
+  if (clickableHit) {
+    const artifact = clickableHit.object;
+
+    controller.controls.unlock();
+    controller.enabled = false;
+
+    showModal(artifact.userData.modalContent);
+  }
+}
+
+window.closeExhibitModal = function () {
+  hideModal();
+
+  if (controller) {
+    controller.controls.lock();
+    controller.enabled = true;
+  }
+};
 function animate() {
   requestAnimationFrame(animate);
 
   const delta = clock.getDelta();
-  controller.update(delta);
+
+  if (controller && controller.enabled) {
+    controller.update(delta);
+  }
 
   // Simple preview animation: rotate any model marked for preview.
   scene.traverse((obj) => {
