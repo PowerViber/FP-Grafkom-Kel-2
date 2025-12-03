@@ -8,7 +8,7 @@ import {
 import { createTextTexture } from "../utils/createTextTexture.js";
 
 export function createSeparatorSulawesiPapua() {
-  const separatorBlock = createBlock("SeparatorSulawesiPapua", 0xcccccc);
+  const separatorBlock = createBlock("SeparatorSulawesiPapua");
 
   const W = SEPARATOR_BEND_SPAN;
   const D = SEPARATOR_BEND_THICKNESS;
@@ -74,6 +74,27 @@ export function createSeparatorSulawesiPapua() {
   );
   textMeshLeft.rotation.y = -Math.PI / 2;
   separatorBlock.add(textMeshLeft);
+
+  const textureLoader = new THREE.TextureLoader();
+  const floorTexture = textureLoader.load(
+    "./src/assets/floor_texture.jpg",
+    (tex) => {
+      tex.flipY = false;
+      tex.encoding = THREE.sRGBEncoding;
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(8, 2);
+    }
+  );
+
+  separatorBlock.traverse((child) => {
+    if (child.isMesh && child.userData && child.userData.isWalkable) {
+      if (child.material) {
+        child.material.map = floorTexture;
+        child.material.needsUpdate = true;
+      }
+    }
+  });
 
   return separatorBlock;
 }
