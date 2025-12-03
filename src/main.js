@@ -78,7 +78,42 @@ function composeMuseum(scene) {
     });
   });
 
+  createMuseumRoof(scene);
+
   return collidableMeshes;
+}
+
+/**
+ * Creates a single, large roof (ceiling) that covers the entire length and width
+ * of the assembled museum by calculating the total structure bounds.
+ * @param {THREE.Scene} scene - The main Three.js scene containing all blocks.
+ */
+function createMuseumRoof(scene) {
+  const overallBox = new THREE.Box3().setFromObject(scene);
+
+  const size = new THREE.Vector3();
+  overallBox.getSize(size);
+
+  const center = new THREE.Vector3();
+  overallBox.getCenter(center);
+
+  const ROOF_CEILING_HEIGHT = 15;
+  const ROOF_THICKNESS = 0.5;
+
+  const roofGeometry = new THREE.BoxGeometry(size.x, ROOF_THICKNESS, size.z);
+
+  const roofMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+
+  const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+  roof.name = "MuseumRoof";
+
+  roof.position.set(
+    center.x,
+    ROOF_CEILING_HEIGHT + ROOF_THICKNESS / 2,
+    center.z
+  );
+
+  scene.add(roof);
 }
 
 function onWindowResize() {
