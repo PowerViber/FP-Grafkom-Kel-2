@@ -93,6 +93,13 @@ function animate() {
   const delta = clock.getDelta();
   controller.update(delta);
 
+  // Simple preview animation: rotate any model marked for preview.
+  scene.traverse((obj) => {
+    if (obj.userData && obj.userData.preview) {
+      obj.rotation.y += delta * 0.5; // rotate slowly
+    }
+  });
+
   renderer.render(scene, camera);
 }
 

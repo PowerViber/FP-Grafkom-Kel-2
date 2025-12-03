@@ -28,6 +28,11 @@ export class FPSController {
       CAMERA_Y_OFFSET
     );
 
+    // Position logging (prints to console periodically)
+    this.posLogAccumulator = 0; // seconds
+    this.posLogInterval = 0.5; // log every 0.5s
+    this.enablePosLogging = true;
+
     this.bindEvents();
     this.setupPointerLock();
   }
@@ -200,5 +205,17 @@ export class FPSController {
     this.controls.moveForward(-this.velocity.z * delta);
 
     this.controls.getObject().position.y = CAMERA_Y_OFFSET;
+
+    // Periodic console logging of current player position.
+    if (this.enablePosLogging) {
+      this.posLogAccumulator += delta;
+      if (this.posLogAccumulator >= this.posLogInterval) {
+        const p = this.controls.getObject().position;
+        console.log(
+          `Player position: x=${p.x.toFixed(2)}, y=${p.y.toFixed(2)}, z=${p.z.toFixed(2)}`
+        );
+        this.posLogAccumulator = 0;
+      }
+    }
   }
 }
