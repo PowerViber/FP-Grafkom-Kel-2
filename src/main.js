@@ -166,6 +166,8 @@ function onMouseDown() {
   if (clickableHit) {
     const artifact = clickableHit.object;
 
+    controller.suppressInstructions = true;
+
     controller.controls.unlock();
     controller.enabled = false;
 

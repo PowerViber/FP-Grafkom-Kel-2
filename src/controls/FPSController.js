@@ -32,6 +32,7 @@ export class FPSController {
     this.posLogAccumulator = 0; // seconds
     this.posLogInterval = 0.5; // log every 0.5s
     this.enablePosLogging = true;
+    this.suppressInstructions = false;
 
     this.bindEvents();
     this.setupPointerLock();
@@ -57,11 +58,18 @@ export class FPSController {
     this.controls.addEventListener("lock", () => {
       instructions.style.display = "none";
       blocker.style.display = "none";
+      this.suppressInstructions = false;
     });
 
     this.controls.addEventListener("unlock", () => {
-      blocker.style.display = "block";
-      instructions.style.display = "flex";
+      if (this.suppressInstructions) {
+        // Keep the blocker hidden if we are just opening a modal
+        blocker.style.display = "none";
+        instructions.style.display = "none";
+      } else {
+        blocker.style.display = "block";
+        instructions.style.display = "flex";
+      }
     });
   }
 
@@ -212,7 +220,9 @@ export class FPSController {
       if (this.posLogAccumulator >= this.posLogInterval) {
         const p = this.controls.getObject().position;
         console.log(
-          `Player position: x=${p.x.toFixed(2)}, y=${p.y.toFixed(2)}, z=${p.z.toFixed(2)}`
+          `Player position: x=${p.x.toFixed(2)}, y=${p.y.toFixed(
+            2
+          )}, z=${p.z.toFixed(2)}`
         );
         this.posLogAccumulator = 0;
       }
