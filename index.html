@@ -5,21 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FPP Nusantara Museum Tour</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="src/styles/style.css" />
   </head>
 
   <body class="bg-gray-900 m-0 overflow-hidden relative">
-    <div id="blocker" class="absolute inset-0 bg-black/50 z-[99]">
+    <div id="blocker" class="absolute inset-0 z-[99]">
       <div
         id="instructions"
-        class="absolute inset-0 bg-black/80 text-white flex flex-col justify-center items-center text-center font-sans z-[100]"
+        class="absolute inset-0 bg-[#daf6ff] text-black flex flex-col justify-center items-center text-center font-sans z-[100]"
       >
-        <h1 class="text-3xl font-bold">Welcome to FPP Nusantara Museum Tour</h1>
-        <h2 class="text-2xl mb-4 mt-2">Click to Start</h2>
+        <h1 class="text-4xl md:text-5xl font-bold title-font drop-shadow-lg">
+          Selamat Datang
+        </h1>
+        <h2 class="title-font text-2xl mt-2">
+          Di Tur Museum Virtual Nusantara
+        </h2>
 
-        <p class="text-xl mb-2">Controls:</p>
-        <p class="text-lg">WASD to Move</p>
-        <p class="text-lg">Mouse to Look Around</p>
-        <p class="text-lg">ESC to exit (and lock cursor again to re-enter)</p>
+        <div
+          class="bg-white/60 backdrop-blur-md px-6 my-6 py-4 rounded-xl shadow-md max-w-lg"
+        >
+          <p class="text-xl font-semibold mb-2 title-font">Petunjuk:</p>
+
+          <p class="text-lg">WASD untuk Bergerak</p>
+          <p class="text-lg">Mouse untuk Melihat Sekitar</p>
+          <p class="text-lg">
+            ESC untuk keluar (kembali ke halaman ini kapan saja)
+          </p>
+        </div>
+
+        <h2
+          class="text-2xl md:text-3xl font-semibold drop-shadow animate-bounce cursor-pointer title-font"
+        >
+          Klik untuk Memulai
+        </h2>
+
+        <img
+          src="src/assets/instructions/asset-left.png"
+          alt="asset-left"
+          class="absolute left-0 w-1/3 bottom-0"
+        />
+        <img
+          src="src/assets/instructions/asset-right.png"
+          alt="asset-right"
+          class="absolute right-0 w-1/3 bottom-0"
+        />
+        <img
+          src="src/assets/instructions/awan-left.png"
+          alt="awan-left"
+          class="absolute left-0 w-1/3 top-0"
+        />
+        <img
+          src="src/assets/instructions/awan-right.png"
+          alt="awan-right"
+          class="absolute right-0 w-1/3 top-0"
+        />
       </div>
     </div>
 
