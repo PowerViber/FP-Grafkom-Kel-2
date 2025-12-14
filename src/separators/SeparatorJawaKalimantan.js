@@ -6,6 +6,7 @@ import {
   WALL_THICKNESS,
 } from "../constants.js";
 import { createTextTexture } from "../utils/createTextTexture.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 
 export function createSeparatorJawaKalimantan() {
   const separatorBlock = createBlock("SeparatorJawaKalimantan");
@@ -76,6 +77,43 @@ export function createSeparatorJawaKalimantan() {
   separatorBlock.add(textMeshLeft);
 
   const textureLoader = new THREE.TextureLoader();
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (jawaTex) => {
+      jawaTex.flipY = false;
+      jawaTex.encoding = THREE.sRGBEncoding;
+      jawaTex.wrapS = THREE.RepeatWrapping;
+      jawaTex.wrapT = THREE.RepeatWrapping;
+
+      separatorBlock.traverse((child) => {
+        if (isWall(child) && child.position.x < 0) {
+          applyWallTexture(child, jawaTex);
+        }
+      });
+    },
+    undefined,
+    (err) => console.error("Error loading Jawa texture:", err)
+  );
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (kalimantanTex) => {
+      kalimantanTex.flipY = false;
+      kalimantanTex.encoding = THREE.sRGBEncoding;
+      kalimantanTex.wrapS = THREE.RepeatWrapping;
+      kalimantanTex.wrapT = THREE.RepeatWrapping;
+
+      separatorBlock.traverse((child) => {
+        if (isWall(child) && child.position.x > 0) {
+          applyWallTexture(child, kalimantanTex);
+        }
+      });
+    },
+    undefined,
+    (err) => console.error("Error loading Kalimantan texture:", err)
+  );
+
   const floorTexture = textureLoader.load(
     "./src/assets/floor_texture.jpg",
     (tex) => {

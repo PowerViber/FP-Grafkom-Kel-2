@@ -5,6 +5,7 @@ import { createClickableObject } from "../utils/createClickableObject.js";
 import SARON_CONTENT from "../content/jawa_saron.js";
 import KENDANG_CONTENT from "../content/jawa_kendang.js";
 import KERIS_CONTENT from "../content/jawa_keris.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 
 export function createJawa(clickableObjectsArray) {
   const jawaBlock = createBlock("Jawa");
@@ -78,24 +79,42 @@ export function createJawa(clickableObjectsArray) {
   });
 
   const textureLoader = new THREE.TextureLoader();
-  const floorTexture = textureLoader.load(
-    "./src/assets/floor_texture.jpg",
-    (tex) => {
-      tex.flipY = false;
-      tex.encoding = THREE.sRGBEncoding;
-      tex.wrapS = THREE.RepeatWrapping;
-      tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(4, 8);
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (baseTexture) => {
+      baseTexture.flipY = false;
+      baseTexture.encoding = THREE.sRGBEncoding;
+      baseTexture.wrapS = THREE.RepeatWrapping;
+      baseTexture.wrapT = THREE.RepeatWrapping;
+
+      jawaBlock.traverse((child) => {
+        if (isWall(child)) {
+          applyWallTexture(child, baseTexture);
+        }
+      });
+    },
+    undefined,
+    (error) => {
+      console.error("Error loading Jawa wall texture:", error);
     }
   );
 
-  jawaBlock.traverse((child) => {
-    if (child.isMesh && child.userData && child.userData.isWalkable) {
-      if (child.material) {
-        child.material.map = floorTexture;
-        child.material.needsUpdate = true;
+  textureLoader.load("./src/assets/floor_texture.jpg", (floorTexture) => {
+    floorTexture.flipY = false;
+    floorTexture.encoding = THREE.sRGBEncoding;
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(4, 8);
+
+    jawaBlock.traverse((child) => {
+      if (child.isMesh && child.userData && child.userData.isWalkable) {
+        if (child.material) {
+          child.material.map = floorTexture;
+          child.material.needsUpdate = true;
+        }
       }
-    }
+    });
   });
 
   return jawaBlock;

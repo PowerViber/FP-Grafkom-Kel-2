@@ -6,6 +6,7 @@ import {
   WALL_THICKNESS,
 } from "../constants.js";
 import { createTextTexture } from "../utils/createTextTexture.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 
 export function createSeparatorSulawesiPapua() {
   const separatorBlock = createBlock("SeparatorSulawesiPapua");
@@ -76,6 +77,43 @@ export function createSeparatorSulawesiPapua() {
   separatorBlock.add(textMeshLeft);
 
   const textureLoader = new THREE.TextureLoader();
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (sulawesiTex) => {
+      sulawesiTex.flipY = false;
+      sulawesiTex.encoding = THREE.sRGBEncoding;
+      sulawesiTex.wrapS = THREE.RepeatWrapping;
+      sulawesiTex.wrapT = THREE.RepeatWrapping;
+
+      separatorBlock.traverse((child) => {
+        if (isWall(child) && child.position.x < 0) {
+          applyWallTexture(child, sulawesiTex);
+        }
+      });
+    },
+    undefined,
+    (err) => console.error("Error loading Sulawesi texture:", err)
+  );
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (papuaTex) => {
+      papuaTex.flipY = false;
+      papuaTex.encoding = THREE.sRGBEncoding;
+      papuaTex.wrapS = THREE.RepeatWrapping;
+      papuaTex.wrapT = THREE.RepeatWrapping;
+
+      separatorBlock.traverse((child) => {
+        if (isWall(child) && child.position.x > 0) {
+          applyWallTexture(child, papuaTex);
+        }
+      });
+    },
+    undefined,
+    (err) => console.error("Error loading Papua texture:", err)
+  );
+
   const floorTexture = textureLoader.load(
     "./src/assets/floor_texture.jpg",
     (tex) => {

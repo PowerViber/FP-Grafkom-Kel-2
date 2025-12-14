@@ -2,7 +2,8 @@ import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createClickableObject } from "../utils/createClickableObject.js";
-import BADIK_CONTENT from "../content/sulawesi_badik.js"; 
+import BADIK_CONTENT from "../content/sulawesi_badik.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 
 export function createSulawesi(clickableObjectsArray) {
   const sulawesiBlock = createBlock("Sulawesi");
@@ -42,13 +43,13 @@ export function createSulawesi(clickableObjectsArray) {
         .then((artifact) => {
           if (name.includes("Badik")) {
             // --- AREA DEBUGGING ---
-            
-            artifact.rotation.set(0, 0, 0); 
-            
-            artifact.scale.set(15, 15, 15); 
-            
+
+            artifact.rotation.set(0, 0, 0);
+
+            artifact.scale.set(15, 15, 15);
+
             artifact.position.set(0, 0.2, 0);
-            
+
             console.log("Badik loaded:", artifact);
           }
 
@@ -63,8 +64,28 @@ export function createSulawesi(clickableObjectsArray) {
     });
   });
 
-  // Texture Lantai (Kode standar)
   const textureLoader = new THREE.TextureLoader();
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (baseTexture) => {
+      baseTexture.flipY = false;
+      baseTexture.encoding = THREE.sRGBEncoding;
+      baseTexture.wrapS = THREE.RepeatWrapping;
+      baseTexture.wrapT = THREE.RepeatWrapping;
+
+      sulawesiBlock.traverse((child) => {
+        if (isWall(child)) {
+          applyWallTexture(child, baseTexture);
+        }
+      });
+    },
+    undefined,
+    (error) => {
+      console.error("Error loading Sulawesi wall texture:", error);
+    }
+  );
+
   const floorTexture = textureLoader.load(
     "./src/assets/floor_texture.jpg",
     (tex) => {
