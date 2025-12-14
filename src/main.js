@@ -3,7 +3,7 @@ import { setupScene } from "./scene.js";
 import { setupCamera } from "./camera.js";
 import { setupRenderer } from "./renderer.js";
 import { FPSController } from "./controls/FPSController.js";
-import { POSITIONS } from "./constants.js";
+import { POSITIONS, ISLAND_DEPTH } from "./constants.js";
 
 import { createSumatra } from "./islands/Sumatra.js";
 import { createJawa } from "./islands/Jawa.js";
@@ -17,8 +17,14 @@ import { createSeparatorKalimantanSulawesi } from "./separators/SeparatorKaliman
 import { createSeparatorSulawesiPapua } from "./separators/SeparatorSulawesiPapua.js";
 
 import { showModal, hideModal } from "./ui/modal.js";
+import { InstrumentPlayer } from "./ui/InstrumentPlayer.js";
 
 let camera, scene, renderer, controller;
+let sulawesiSound;
+let isSulawesiPlaying = false;
+let audioLoader;
+let listener;
+let instrumentPlayer;
 const clock = new THREE.Clock();
 
 const raycaster = new THREE.Raycaster();
@@ -37,6 +43,29 @@ function init() {
 
   renderer.domElement.addEventListener("mousedown", onMouseDown, false);
 
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (sulawesiSound && sulawesiSound.isPlaying) {
+        sulawesiSound.stop();
+        isSulawesiPlaying = false;
+      }
+    }
+  });
+
+  // Event delegation for dynamic modal content
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "btn-play-kecapi") {
+      // Pause background music if needed
+      if (sulawesiSound && sulawesiSound.isPlaying) {
+        sulawesiSound.pause();
+        isSulawesiPlaying = false;
+      }
+
+      // Open Instrument Player Overlay
+      instrumentPlayer.open();
+    }
+  });
+
   allCollidableMeshes = composeMuseum(scene, clickableMeshes);
 
   controller = new FPSController(
@@ -45,6 +74,21 @@ function init() {
     allCollidableMeshes
   );
   scene.add(controller.controls.getObject());
+
+  // Audio Initialization
+  listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  sulawesiSound = new THREE.Audio(listener);
+  audioLoader = new THREE.AudioLoader();
+
+  audioLoader.load("./src/assets/sulawesi_angin_mamiri.mp3", (buffer) => {
+    sulawesiSound.setBuffer(buffer);
+    sulawesiSound.setLoop(true);
+    sulawesiSound.setVolume(0.5);
+  }, undefined, (err) => console.log(err));
+
+  instrumentPlayer = new InstrumentPlayer();
 
   const instructions = document.getElementById("instructions");
   const blocker = document.getElementById("blocker");
@@ -57,6 +101,12 @@ function init() {
   controller.controls.addEventListener("unlock", function () {
     blocker.style.display = "flex";
     controller.enabled = false;
+
+    // Stop music on ESC/Unlock
+    if (sulawesiSound && sulawesiSound.isPlaying) {
+      sulawesiSound.stop();
+      isSulawesiPlaying = false;
+    }
   });
 
   instructions.addEventListener("click", function () {
@@ -190,6 +240,29 @@ function animate() {
 
   if (controller && controller.enabled) {
     controller.update(delta);
+
+    // Inline Audio Logic for Sulawesi
+    const z = camera.position.z;
+    const sulawesiCenterZ = POSITIONS.Sulawesi.z; // roughly -340
+    const halfDepth = ISLAND_DEPTH / 2; // 40
+    const buffer = 10;
+
+    // Bounds for Sulawesi audio
+    const inSulawesi =
+      z <= sulawesiCenterZ + halfDepth + buffer &&
+      z >= sulawesiCenterZ - halfDepth - buffer;
+
+    if (inSulawesi) {
+      if (!isSulawesiPlaying && sulawesiSound.buffer) {
+        sulawesiSound.play();
+        isSulawesiPlaying = true;
+      }
+    } else {
+      if (isSulawesiPlaying) {
+        sulawesiSound.stop();
+        isSulawesiPlaying = false;
+      }
+    }
   }
 
   // Simple preview animation: rotate any model marked for preview.

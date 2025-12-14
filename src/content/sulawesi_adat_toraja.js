@@ -9,5 +9,14 @@ export default html`
     serta gelang dan kalung tradisional, melambangkan keanggunan dan strata sosial 
     pemakainya dalam upacara adat.
   </p>
+  <h3 class="text-2xl font-semibold mb-4 mt-6">Pakaian Adat Seppa Tallung</h3>
+  <p>
+    Seppa Tallung adalah pakaian adat tradisional khusus pria suku Toraja. Pakaian ini berupa 
+    setelan baju dan celana pendek yang panjangnya mencapai lutut (Tallung Buku). 
+    Dikenal dengan warna-warna cerah seperti merah, kuning, dan putih yang melambangkan 
+    keberanian dan kesucian. Seppa Tallung sering dikenakan lengkap dengan aksesoris 
+    seperti selendang, gayang (keris/parang), dan ikat kepala dalam berbagai upacara adat 
+    penting seperti Rambu Solo' dan Rambu Tuka'.
+  </p>
   <p><em>Type: Cultural Heritage/Clothing</em></p>
 `;

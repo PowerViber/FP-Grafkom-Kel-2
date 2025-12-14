@@ -64,11 +64,9 @@ export function createSulawesi(clickableObjectsArray) {
           if (name.includes("Badik")) {
             // --- AREA DEBUGGING ---
 
-            artifact.rotation.set(0, 0, 0);
-
+            artifact.rotation.set(-Math.PI / 2, 0, 0);
             artifact.scale.set(15, 15, 15);
-
-            artifact.position.set(0, 0.2, 0);
+            artifact.position.set(0, 1.0, 0.35);
 
             console.log("Badik loaded:", artifact);
           } else if (name.includes("Kecapi")) {

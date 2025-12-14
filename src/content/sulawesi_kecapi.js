@@ -8,4 +8,7 @@ export default html`
     daerah serta dalam upacara adat masyarakat Sulawesi.
   </p>
   <p><em>Type: Cultural Artifact/Musical Instrument</em></p>
+  <button id="btn-play-kecapi" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+    Mainkan Alat Musik
+  </button>
 `;
