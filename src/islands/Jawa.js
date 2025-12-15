@@ -30,14 +30,13 @@ export function createJawa(clickableObjectsArray) {
   // Initialize background music
   jawaBackgroundMusic = new Audio("./src/assets/jawa_backsound_gamelan.mp3");
   jawaBackgroundMusic.loop = true;
-  jawaBackgroundMusic.volume = 0.3;
+  jawaBackgroundMusic.volume = 0.2;
   jawaBackgroundMusic.preload = "auto";
 
   jawaBackgroundMusic.addEventListener("error", (e) => {
     console.error("Error loading Jawa background music:", e);
   });
 
-  // Store reference in userData
   jawaBlock.userData.backgroundMusic = jawaBackgroundMusic;
 
   const zPositions = [
@@ -116,6 +115,31 @@ export function createJawa(clickableObjectsArray) {
     const baseModel = gltf.scene;
 
     zPositions.forEach(({ z, model, content, name, inspect }) => {
+      if (name === "Jawa-Angklung") {
+        createClickableObject(model, content, clickableObjectsArray, inspect)
+          .then((artifact) => {
+            artifact.scale.set(2, 2, 2);
+
+            artifact.position.set(xPosition, 0, z);
+            artifact.rotation.y = Math.PI / 2;
+
+            artifact.traverse((child) => {
+              if (child.isMesh) {
+                const soundPath = ANGKLUNG_AUDIO_MAP[child.name];
+                if (soundPath) {
+                  child.userData.soundPath = soundPath;
+                }
+              }
+            });
+
+            artifact.name = name;
+            jawaBlock.add(artifact);
+          })
+          .catch((error) => console.error(`Failed to load ${name}`, error));
+
+        return;
+      }
+
       const displayCase = baseModel.clone();
       displayCase.scale.set(3.5, 3.5, 3.5);
       displayCase.position.set(xPosition, 0, z);
