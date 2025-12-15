@@ -1,5 +1,3 @@
-// src/utils/AudioManager.js
-
 // 1. Default Master Volume (1.0 = 100%)
 let masterVolume = 1.0;
 
