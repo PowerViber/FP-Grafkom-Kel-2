@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 const textureLoader = new THREE.TextureLoader();
 
 export function createPapua() {
@@ -109,6 +110,27 @@ export function createPapua() {
   );
 
   const textureLoader = new THREE.TextureLoader();
+
+  textureLoader.load(
+    "./src/assets/wallpaper.jpg",
+    (baseTexture) => {
+      baseTexture.flipY = false;
+      baseTexture.encoding = THREE.sRGBEncoding;
+      baseTexture.wrapS = THREE.RepeatWrapping;
+      baseTexture.wrapT = THREE.RepeatWrapping;
+
+      papuaBlock.traverse((child) => {
+        if (isWall(child)) {
+          applyWallTexture(child, baseTexture);
+        }
+      });
+    },
+    undefined,
+    (error) => {
+      console.error("Error loading Sumatra wall texture:", error);
+    }
+  );
+
   const floorTexture = textureLoader.load(
     "./src/assets/floor_texture.jpg",
     (tex) => {

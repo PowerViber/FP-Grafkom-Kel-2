@@ -26,6 +26,9 @@ const mouse = new THREE.Vector2();
 let clickableMeshes = [];
 let allCollidableMeshes = [];
 
+let hoveredObject = null;
+const HOVER_COLOR = 0xffff00;
+
 function init() {
   const container = document.body;
 
@@ -183,13 +186,59 @@ window.closeExhibitModal = function () {
     controller.enabled = true;
   }
 };
+
+function updateCrosshairInteraction(time) {
+  raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+
+  const intersects = raycaster.intersectObjects(clickableMeshes, true);
+  const clickableHit = intersects.find((i) => i.object.userData.isClickable);
+
+  if (clickableHit) {
+    const object = clickableHit.object;
+
+    if (hoveredObject !== object) {
+      if (hoveredObject) {
+        resetObjectMaterial(hoveredObject);
+      }
+
+      hoveredObject = object;
+
+      if (!hoveredObject.userData.originalEmissive) {
+        hoveredObject.userData.originalEmissive =
+          hoveredObject.material.emissive.clone();
+      }
+
+      hoveredObject.material.emissive.setHex(HOVER_COLOR);
+    }
+
+    const pulse = Math.sin(time * 5) * 0.1 + 0.3;
+    hoveredObject.material.emissiveIntensity = pulse;
+  } else {
+    if (hoveredObject) {
+      resetObjectMaterial(hoveredObject);
+      hoveredObject = null;
+    }
+  }
+}
+
+function resetObjectMaterial(object) {
+  if (object.userData.originalEmissive) {
+    object.material.emissive.copy(object.userData.originalEmissive);
+  } else {
+    object.material.emissive.setHex(0x000000);
+  }
+  object.material.emissiveIntensity = 0;
+}
+
 function animate() {
   requestAnimationFrame(animate);
 
   const delta = clock.getDelta();
+  const time = clock.getElapsedTime();
 
   if (controller && controller.enabled) {
     controller.update(delta);
+    updateCrosshairInteraction(time);
   }
 
   // Simple preview animation: rotate any model marked for preview.

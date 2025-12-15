@@ -48,7 +48,7 @@ export function createBlock(name, color = 0xaaaaaa) {
 
   // --- Walls ---
   const wallThickness = WALL_THICKNESS;
-  const wallMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
+  const wallMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
   const wallHeight = H;
 
   const sideWallGeometry = new THREE.BoxGeometry(wallThickness, wallHeight, D);
