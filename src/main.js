@@ -3,8 +3,8 @@ import { setupScene } from "./scene.js";
 import { setupCamera } from "./camera.js";
 import { setupRenderer } from "./renderer.js";
 import { FPSController } from "./controls/FPSController.js";
-import { POSITIONS } from "./constants.js";
 import { setMasterVolume } from "./utils/audioManager.js";
+import { POSITIONS, ISLAND_DEPTH, CAMERA_Y_OFFSET } from "./constants.js";
 
 import {
   createSumatra,
@@ -89,6 +89,7 @@ function init() {
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsBtn = document.getElementById("close-settings");
   const volumeSlider = document.getElementById("volume-slider");
+  const speedSlider = document.getElementById("speed-slider");
 
   // Open Settings
   settingsBtn.addEventListener("click", () => {
@@ -107,6 +108,44 @@ function init() {
   volumeSlider.addEventListener("input", (e) => {
     const value = parseFloat(e.target.value);
     setMasterVolume(value); // This updates ALL sounds instantly!
+  });
+
+  speedSlider.addEventListener("input", (e) => {
+    const newSpeed = parseFloat(e.target.value);
+
+    if (controller) {
+      controller.moveSpeed = newSpeed;
+    }
+  });
+
+  const teleportBtns = document.querySelectorAll(".teleport-btn");
+  teleportBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const islandName = e.target.getAttribute("data-island");
+      const targetPos = POSITIONS[islandName];
+
+      if (targetPos && controller) {
+        // Calculate Entrance Position
+        const spawnX = targetPos.x;
+        const spawnY = CAMERA_Y_OFFSET;
+        // Enter slightly into the island
+        const spawnZ = targetPos.z + ISLAND_DEPTH / 2 - 5;
+
+        // Teleport the player
+        controller.controls.getObject().position.set(spawnX, spawnY, spawnZ);
+
+        // Stop movement momentum
+        if (controller.velocity) {
+          controller.velocity.set(0, 0, 0);
+        }
+
+        console.log(`Teleported to ${islandName}`);
+
+        // Close modal and lock controls
+        if (settingsModal) settingsModal.classList.add("hidden");
+        controller.controls.lock();
+      }
+    });
   });
 
   animate();

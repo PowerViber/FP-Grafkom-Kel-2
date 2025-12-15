@@ -15,6 +15,7 @@ export class FPSController {
 
     this.controls = new PointerLockControls(this.camera, this.domElement);
 
+    this.moveSpeed = PLAYER_SPEED;
     this.moveForward = false;
     this.moveBackward = false;
     this.moveLeft = false;
@@ -221,9 +222,9 @@ export class FPSController {
 
     // Apply speed if keys are pressed
     if (this.moveForward || this.moveBackward)
-      this.velocity.z -= this.direction.z * PLAYER_SPEED * 60.0 * delta;
+      this.velocity.z -= this.direction.z * this.moveSpeed * 60.0 * delta;
     if (this.moveLeft || this.moveRight)
-      this.velocity.x -= this.direction.x * PLAYER_SPEED * 60.0 * delta;
+      this.velocity.x -= this.direction.x * this.moveSpeed * 60.0 * delta;
 
     // --- Collision Check ---
     const currentPos = this.controls.getObject().position;
