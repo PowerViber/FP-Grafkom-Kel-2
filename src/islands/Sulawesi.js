@@ -28,6 +28,21 @@ export function createSulawesi(clickableObjectsArray) {
   // Store reference in userData
   sulawesiBlock.userData.backgroundMusic = sulawesiBackgroundMusic;
 
+  // Ganti jadi audio yang sesuai daerah kalian
+  sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_bgm.mp3");
+  sulawesiBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(sulawesiBackgroundMusic, 0.3);
+  sulawesiBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  sulawesiBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Sulawesi background music:", e);
+  });
+
+  // Store reference in userData
+  sulawesiBlock.userData.backgroundMusic = sulawesiBackgroundMusic;
+
   const zPositions = [
     {
       z: 0,

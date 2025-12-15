@@ -24,8 +24,8 @@ export function createSumatra(clickableObjectsArray) {
   sumatraBackgroundMusic.preload = "auto";
 
   // Add error handler to prevent crashes
-  sumatraBackgroundMusic.addEventListener('error', (e) => {
-    console.error('Error loading Sumatra background music:', e);
+  sumatraBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Sumatra background music:", e);
   });
 
   // Store reference in userData
@@ -37,7 +37,11 @@ export function createSumatra(clickableObjectsArray) {
       model: "./src/assets/sumatra_rendang.glb",
       content: RENDANG_CONTENT,
       name: "Sumatra-Rendang",
-      inspect: { title: "Rendang", subtitle: "Type: Traditional Food", audioPath: null },
+      inspect: {
+        title: "Rendang",
+        subtitle: "Type: Traditional Food",
+        audioPath: null,
+      },
       scale: { x: 2.4, y: 2.4, z: 2.4 },
       position: { x: 0, y: 0.55, z: 0 },
       rotation: { x: Math.PI / 4, y: 0, z: 0 }, // 45 degrees tilt forward
@@ -47,28 +51,44 @@ export function createSumatra(clickableObjectsArray) {
       model: "./src/assets/sumatra_kompang.glb",
       content: KOMPANG_CONTENT,
       name: "Sumatra-Kompang",
-      inspect: { title: "Kompang", subtitle: "Type: Musical Instrument", audioPath: "./src/assets/sumatra_suara_kompang.mp3" },
+      inspect: {
+        title: "Kompang",
+        subtitle: "Type: Musical Instrument",
+        audioPath: "./src/assets/sumatra_suara_kompang.mp3",
+      },
     },
     {
       z: 0,
       model: "./src/assets/sumatra_tambua.glb",
       content: TAMBUA_CONTENT,
       name: "Sumatra-Tambua",
-      inspect: { title: "Tambua", subtitle: "Type: Musical Instrument", audioPath: "./src/assets/sumatra_suara_tambua.mp3" },
+      inspect: {
+        title: "Tambua",
+        subtitle: "Type: Musical Instrument",
+        audioPath: "./src/assets/sumatra_suara_tambua.mp3",
+      },
     },
     {
       z: -10,
       model: "./src/assets/sumatra_rencong_aceh.glb",
       content: RENCONG_CONTENT,
       name: "Sumatra-Rencong",
-      inspect: { title: "Rencong Aceh", subtitle: "Type: Traditional Weapon", audioPath: null },
+      inspect: {
+        title: "Rencong Aceh",
+        subtitle: "Type: Traditional Weapon",
+        audioPath: null,
+      },
     },
     {
       z: -25,
       model: "./src/assets/sumatra_meunasah_tuha_dayah_muara_minaret.glb",
       content: MEUNASAH_CONTENT,
       name: "Sumatra-Meunasah",
-      inspect: { title: "Meunasah Minaret", subtitle: "Type: Historical Architecture", audioPath: null },
+      inspect: {
+        title: "Meunasah Minaret",
+        subtitle: "Type: Historical Architecture",
+        audioPath: null,
+      },
       scale: { x: 0.05, y: 0.05, z: 0.05 },
       position: { x: 0.1, y: 0.4, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -91,43 +111,43 @@ export function createSumatra(clickableObjectsArray) {
   loader.load("./src/assets/display_case.glb", (gltf) => {
     const baseModel = gltf.scene;
 
-    zPositions.forEach(({ z, model, content, name, inspect, scale, position, rotation }) => {
-      const displayCase = baseModel.clone();
-      displayCase.scale.set(2.5, 2.5, 2.5);
-      displayCase.position.set(xPosition, 0, z);
+    zPositions.forEach(
+      ({ z, model, content, name, inspect, scale, position, rotation }) => {
+        const displayCase = baseModel.clone();
+        displayCase.scale.set(2.5, 2.5, 2.5);
+        displayCase.position.set(xPosition, 0, z);
 
-      createClickableObject(model, content, clickableObjectsArray, inspect)
-        .then((artifact) => {
-          // Use custom scale/position/rotation if provided, otherwise use defaults
-          if (scale && position && rotation !== undefined) {
-            artifact.scale.set(scale.x, scale.y, scale.z);
-            artifact.position.set(position.x, position.y, position.z);
-            // Apply rotation on all axes if provided
-            if (rotation.x !== undefined) artifact.rotation.x = rotation.x;
-            if (rotation.y !== undefined) artifact.rotation.y = rotation.y;
-            if (rotation.z !== undefined) artifact.rotation.z = rotation.z;
-          } else if (name.includes("Kompang")) {
-            artifact.scale.set(0.5, 0.5, 0.5);
-            artifact.position.set(0, 0.6, 0);
-            artifact.rotation.y = Math.PI / 2;
-          } else if (name.includes("Tambua")) {
-            artifact.scale.set(0.3, 0.3, 0.3);
-            artifact.position.set(0, 0.5, 0);
-          } else if (name.includes("Rencong")) {
-            artifact.scale.set(0.175, 0.175, 0.175);
-            artifact.position.set(0, 0.5, 0);
-            artifact.rotation.y = Math.PI / 2;
-          }
+        createClickableObject(model, content, clickableObjectsArray, inspect)
+          .then((artifact) => {
+            // Use custom scale/position/rotation if provided, otherwise use defaults
+            if (scale && position && rotation !== undefined) {
+              artifact.scale.set(scale.x, scale.y, scale.z);
+              artifact.position.set(position.x, position.y, position.z);
+              // Apply rotation on all axes if provided
+              if (rotation.x !== undefined) artifact.rotation.x = rotation.x;
+              if (rotation.y !== undefined) artifact.rotation.y = rotation.y;
+              if (rotation.z !== undefined) artifact.rotation.z = rotation.z;
+            } else if (name.includes("Kompang")) {
+              artifact.scale.set(0.5, 0.5, 0.5);
+              artifact.position.set(0, 0.6, 0);
+              artifact.rotation.y = Math.PI / 2;
+            } else if (name.includes("Tambua")) {
+              artifact.scale.set(0.3, 0.3, 0.3);
+              artifact.position.set(0, 0.5, 0);
+            } else if (name.includes("Rencong")) {
+              artifact.scale.set(0.175, 0.175, 0.175);
+              artifact.position.set(0, 0.5, 0);
+              artifact.rotation.y = Math.PI / 2;
+            }
 
-          artifact.name = name;
-          displayCase.add(artifact);
-        })
-        .catch((error) =>
-          console.error(`Failed to load ${name}:`, error)
-        );
+            artifact.name = name;
+            displayCase.add(artifact);
+          })
+          .catch((error) => console.error(`Failed to load ${name}:`, error));
 
-      sumatraBlock.add(displayCase);
-    });
+        sumatraBlock.add(displayCase);
+      }
+    );
   });
 
   const textureLoader = new THREE.TextureLoader();
@@ -263,9 +283,9 @@ export function createSumatra(clickableObjectsArray) {
     scale: 3,
     clickableObjects: clickableObjectsArray,
     modalContent: `
-      <h3 class="text-2xl font-semibold mb-4">Mega Mendung Batik</h3>
-      <p>A traditional batik pattern from Cirebon, Java.</p>
-      <p>The clouds represent the sky and the upper world.</p>
+      <h3 class="text-2xl font-semibold mb-4">Sisingamangaraja XII</h3>
+      <p>Raja-imam terakhir masyarakat Batak di Sumatera Utara.</p>
+      <p>Beliau memimpin perang gerilya sengit selama 30 tahun melawan kolonialisme Belanda (1878-1907) dan dikenal karena penolakannya untuk menyerah, bertempur hingga gugur di medan perang.</p>
     `,
   });
 
@@ -315,8 +335,9 @@ export function createSumatra(clickableObjectsArray) {
 export function playSumatraMusic() {
   if (sumatraBackgroundMusic && sumatraBackgroundMusic.paused) {
     // Only play if audio is ready to prevent lag
-    if (sumatraBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
-      sumatraBackgroundMusic.play().catch(err => {
+    if (sumatraBackgroundMusic.readyState >= 2) {
+      // HAVE_CURRENT_DATA or higher
+      sumatraBackgroundMusic.play().catch((err) => {
         console.log("Sumatra music play failed:", err);
       });
     }
