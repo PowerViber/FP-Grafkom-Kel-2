@@ -22,24 +22,34 @@ export function createSeparatorSulawesiPapua() {
   const planeHeight = 4;
 
   // PAPUA SIGN (Right Side)
-  const papuaSign = createFramedSign("PAPUA", planeWidth, planeHeight, "./src/separators/pulau/pulau_papua.jpg");
-  papuaSign.position.set(
+  const sulawesiSign = createFramedSign(
+    "SULAWESI",
+    planeWidth,
+    planeHeight,
+    "./src/separators/pulau/pulau_sulawesi.jpg"
+  );
+  sulawesiSign.position.set(
     xPositionRight - WALL_THICKNESS / 2 - 0.3,
     5,
     zPosition
   );
-  papuaSign.rotation.y = -Math.PI / 2;
-  separatorBlock.add(papuaSign);
+  sulawesiSign.rotation.y = -Math.PI / 2;
+  separatorBlock.add(sulawesiSign);
 
   // SULAWESI SIGN (Left Side)
-  const sulawesiSign = createFramedSign("SULAWESI", planeWidth, planeHeight, "./src/separators/pulau/pulau_sulawesi.jpg");
-  sulawesiSign.position.set(
+  const papuaSign = createFramedSign(
+    "PAPUA",
+    planeWidth,
+    planeHeight,
+    "./src/separators/pulau/pulau_papua.jpg"
+  );
+  papuaSign.position.set(
     xPositionLeft + WALL_THICKNESS / 2 + 0.3,
     5,
     zPosition
   );
-  sulawesiSign.rotation.y = Math.PI / 2;
-  separatorBlock.add(sulawesiSign);
+  papuaSign.rotation.y = Math.PI / 2;
+  separatorBlock.add(papuaSign);
 
   const textureLoader = new THREE.TextureLoader();
 
