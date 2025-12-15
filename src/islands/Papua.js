@@ -22,8 +22,8 @@ export function createPapua(clickableObjectsArray) {
   papuaBackgroundMusic.preload = "auto";
 
   // Add error handler to prevent crashes
-  papuaBackgroundMusic.addEventListener('error', (e) => {
-    console.error('Error loading Papua background music:', e);
+  papuaBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Papua background music:", e);
   });
 
   // Store reference in userData
