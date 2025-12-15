@@ -5,6 +5,21 @@ import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 export function createKalimantan() {
   const kalimantanBlock = createBlock("Kalimantan");
 
+  // Ganti jadi audio yang sesuai daerah kalian
+  kalimantanBackgroundMusic = new Audio("./src/assets/kalimantan_bgm.mp3");
+  kalimantanBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(kalimantanBackgroundMusic, 0.3);
+  kalimantanBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  kalimantanBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Kalimantan background music:", e);
+  });
+
+  // Store reference in userData
+  kalimantanBlock.userData.backgroundMusic = kalimantanBackgroundMusic;
+
   const textureLoader = new THREE.TextureLoader();
 
   textureLoader.load(

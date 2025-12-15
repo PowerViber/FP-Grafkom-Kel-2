@@ -326,16 +326,32 @@ function animate() {
     const sumatraMaxZ = POSITIONS.Sumatra.z + 50;
     const inSumatra = playerZ >= sumatraMinZ && playerZ <= sumatraMaxZ;
 
-    if (inSumatra && currentSection !== "Sumatra") {
-      // Player just entered Sumatra section
-      console.log("Entering Sumatra section - starting music");
-      currentSection = "Sumatra";
-      playSumatraMusic();
-    } else if (!inSumatra && currentSection === "Sumatra") {
-      // Player just left Sumatra section
-      console.log("Leaving Sumatra section - pausing music");
-      currentSection = null;
-      pauseSumatraMusic();
+    // Check which section we are in
+    let newSection = null;
+    if (inSumatra) newSection = "Sumatra";
+    else if (inJawa) newSection = "Jawa";
+    else if (inKalimantan) newSection = "Kalimantan";
+    else if (inSulawesi) newSection = "Sulawesi";
+    else if (inPapua) newSection = "Papua";
+
+    // If we changed sections (entered a new one or left one)
+    if (newSection !== currentSection) {
+      // 1. Stop the OLD music
+      if (currentSection === "Sumatra") pauseSumatraMusic();
+      if (currentSection === "Jawa") pauseJawaMusic();
+      if (currentSection === "Kalimantan") pauseKalimantanMusic();
+      if (currentSection === "Sulawesi") pauseSulawesiMusic();
+      if (currentSection === "Papua") pausePapuaMusic();
+
+      // 2. Start the NEW music
+      if (newSection === "Sumatra") playSumatraMusic();
+      if (newSection === "Jawa") playJawaMusic();
+      if (newSection === "Kalimantan") playKalimantanMusic();
+      if (newSection === "Sulawesi") playSulawesiMusic();
+      if (newSection === "Papua") playPapuaMusic();
+
+      // Update tracker
+      currentSection = newSection;
     }
   }
 

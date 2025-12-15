@@ -10,6 +10,21 @@ import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 export function createJawa(clickableObjectsArray) {
   const jawaBlock = createBlock("Jawa");
 
+  // Ganti jadi audio yang sesuai daerah kalian
+  jawaBackgroundMusic = new Audio("./src/assets/jawa_bgm.mp3");
+  jawaBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(jawaBackgroundMusic, 0.3);
+  jawaBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  jawaBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Jawa background music:", e);
+  });
+
+  // Store reference in userData
+  jawaBlock.userData.backgroundMusic = jawaBackgroundMusic;
+
   const zPositions = [
     {
       z: 35,
