@@ -53,7 +53,10 @@ export function createPictureFrame(parent, config) {
           const planeAspect = imageWidth / imageHeight;
           // If texture is rotated 90 degrees, swap its aspect ratio for calculation
           let imageAspect = tex.image.width / tex.image.height;
-          if (Math.abs(textureRotation - Math.PI / 2) < 0.1 || Math.abs(textureRotation + Math.PI / 2) < 0.1) {
+          if (
+            Math.abs(textureRotation - Math.PI / 2) < 0.1 ||
+            Math.abs(textureRotation + Math.PI / 2) < 0.1
+          ) {
             imageAspect = 1 / imageAspect;
           }
 

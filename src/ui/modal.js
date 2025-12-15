@@ -9,9 +9,10 @@ export function showModal(content, inspectData = null) {
 
     // Add Inspect button if inspectData provided
     if (inspectData) {
-      const inspectBtn = document.createElement('button');
-      inspectBtn.textContent = 'Inspect';
-      inspectBtn.className = 'mt-4 px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700 transition';
+      const inspectBtn = document.createElement("button");
+      inspectBtn.textContent = "Inspect";
+      inspectBtn.className =
+        "mt-4 px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700 transition";
       inspectBtn.onclick = () => {
         hideModal();
         showInspectMode(

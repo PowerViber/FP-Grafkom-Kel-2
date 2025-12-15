@@ -46,7 +46,6 @@ export class FPSController {
     // this.loadWeapon();
   }
 
-
   // template equip senjata
   loadWeapon() {
     const loader = new GLTFLoader();
@@ -108,11 +107,10 @@ export class FPSController {
       this.suppressInstructions = false;
     });
 
-
     this.controls.addEventListener("unlock", () => {
       const inspector = document.getElementById("inspector-overlay");
       const isInspectorOpen = inspector && inspector.style.display === "flex";
-      
+
       if (this.suppressInstructions || isInspectorOpen) {
         // Keep the blocker hidden if we are just opening a modal
         blocker.style.display = "none";
