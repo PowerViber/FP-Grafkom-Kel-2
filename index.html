@@ -1,53 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FPP Nusantara Museum Tour</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="src/styles/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FPP Nusantara Museum Tour</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="src/styles/style.css" />
-</head>
+  <body class="bg-gray-900 m-0 overflow-hidden relative">
+    <div id="blocker" class="absolute inset-0 z-[99]">
+      <div
+        id="instructions"
+        class="absolute inset-0 bg-[#daf6ff] text-black flex flex-col justify-center items-center text-center font-sans z-[100]"
+      >
+        <h1 class="text-4xl md:text-5xl font-bold title-font drop-shadow-lg">
+          Selamat Datang
+        </h1>
+        <h2 class="title-font text-2xl mt-2">
+          Di Tur Museum Virtual Nusantara
+        </h2>
 
-<body class="bg-gray-900 m-0 overflow-hidden relative">
-  <div id="blocker" class="absolute inset-0 z-[99]">
-    <div id="instructions"
-      class="absolute inset-0 bg-[#daf6ff] text-black flex flex-col justify-center items-center text-center font-sans z-[100]">
-      <h1 class="text-4xl md:text-5xl font-bold title-font drop-shadow-lg">
-        Selamat Datang
-      </h1>
-      <h2 class="title-font text-2xl mt-2">
-        Di Tur Museum Virtual Nusantara
-      </h2>
+        <div
+          class="bg-white/60 backdrop-blur-md px-6 my-6 py-4 rounded-xl shadow-md max-w-lg"
+        >
+          <p class="text-xl font-semibold mb-2 title-font">Petunjuk:</p>
 
-      <div class="bg-white/60 backdrop-blur-md px-6 my-6 py-4 rounded-xl shadow-md max-w-lg">
-        <p class="text-xl font-semibold mb-2 title-font">Petunjuk:</p>
+          <p class="text-lg">WASD untuk Bergerak</p>
+          <p class="text-lg">Mouse untuk Melihat Sekitar</p>
+          <p class="text-lg">
+            ESC untuk keluar (kembali ke halaman ini kapan saja)
+          </p>
+        </div>
 
-        <p class="text-lg">WASD untuk Bergerak</p>
-        <p class="text-lg">Mouse untuk Melihat Sekitar</p>
-        <p class="text-lg">
-          ESC untuk keluar (kembali ke halaman ini kapan saja)
-        </p>
+        <h2
+          class="text-2xl md:text-3xl font-semibold drop-shadow animate-bounce cursor-pointer title-font"
+        >
+          Klik untuk Memulai
+        </h2>
+
+        <img
+          src="src/assets/instructions/asset-left.png"
+          alt="asset-left"
+          class="absolute left-0 w-1/3 bottom-0"
+        />
+        <img
+          src="src/assets/instructions/asset-right.png"
+          alt="asset-right"
+          class="absolute right-0 w-1/3 bottom-0"
+        />
+        <img
+          src="src/assets/instructions/awan-left.png"
+          alt="awan-left"
+          class="absolute left-0 w-1/3 top-0"
+        />
+        <img
+          src="src/assets/instructions/awan-right.png"
+          alt="awan-right"
+          class="absolute right-0 w-1/3 top-0"
+        />
       </div>
-
-      <h2 class="text-2xl md:text-3xl font-semibold drop-shadow animate-bounce cursor-pointer title-font">
-        Klik untuk Memulai
-      </h2>
-
-      <img src="src/assets/instructions/asset-left.png" alt="asset-left" class="absolute left-0 w-1/3 bottom-0" />
-      <img src="src/assets/instructions/asset-right.png" alt="asset-right" class="absolute right-0 w-1/3 bottom-0" />
-      <img src="src/assets/instructions/awan-left.png" alt="awan-left" class="absolute left-0 w-1/3 top-0" />
-      <img src="src/assets/instructions/awan-right.png" alt="awan-right" class="absolute right-0 w-1/3 top-0" />
     </div>
-  </div>
 
-  <div id="crosshair"
-    class="absolute top-1/2 left-1/2 w-[5px] h-[5px] -mt-[2.5px] -ml-[2.5px] bg-white rounded-full z-10"></div>
+    <div
+      id="crosshair"
+      class="absolute top-1/2 left-1/2 w-[5px] h-[5px] -mt-[2.5px] -ml-[2.5px] bg-white rounded-full z-10"
+    ></div>
 
-  <script type="importmap">
+    <script type="importmap">
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
@@ -56,44 +80,59 @@
       }
     </script>
 
-  <div id="exhibit-modal-container" class="fixed inset-0 hidden justify-center items-center z-[1000]">
-    <div class="bg-white p-5 rounded-lg w-[80%] max-w-[600px] max-h-[90vh] overflow-y-auto text-gray-800 font-sans">
-      <div id="exhibit-modal-content" class="mb-4">
-        <p>This is where the story about the artifact goes.</p>
+    <div
+      id="exhibit-modal-container"
+      class="fixed inset-0 hidden justify-center items-center z-[1000]"
+    >
+      <div
+        class="bg-white p-5 rounded-lg w-[80%] max-w-[600px] max-h-[90vh] overflow-y-auto text-gray-800 font-sans"
+      >
+        <div id="exhibit-modal-content" class="mb-4">
+          <p>This is where the story about the artifact goes.</p>
+        </div>
+
+        <button
+          onclick="window.closeExhibitModal()"
+          class="mt-2 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Inspect Mode Modal -->
+    <div
+      id="inspect-modal-container"
+      class="fixed inset-0 hidden z-[1001] bg-black"
+    >
+      <div id="inspect-3d-container" class="w-full h-full relative"></div>
+
+      <div
+        class="absolute top-10 left-1/2 -translate-x-1/2 text-white text-center"
+      >
+        <h2 id="inspect-title" class="text-3xl font-bold"></h2>
+        <p id="inspect-subtitle" class="text-sm italic mt-2"></p>
       </div>
 
-      <button onclick="window.closeExhibitModal()"
-        class="mt-2 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition">
-        Close
+      <button
+        id="inspect-audio-btn"
+        class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden px-6 py-3 bg-white/20 backdrop-blur text-white rounded-lg hover:bg-white/30 transition"
+      >
+        🔊 Play Sound
       </button>
+
+      <button
+        onclick="window.closeInspectMode()"
+        class="absolute bottom-10 right-10 px-4 py-2 bg-white/20 backdrop-blur text-white rounded-lg hover:bg-white/30 transition"
+      >
+        Exit
+      </button>
+
+      <p class="absolute bottom-10 left-10 text-white/70 text-sm">
+        Drag to Rotate
+      </p>
     </div>
-  </div>
 
-  <!-- Inspect Mode Modal -->
-  <div id="inspect-modal-container" class="fixed inset-0 hidden z-[1001] bg-black">
-    <div id="inspect-3d-container" class="w-full h-full relative"></div>
-
-    <div class="absolute top-10 left-1/2 -translate-x-1/2 text-white text-center">
-      <h2 id="inspect-title" class="text-3xl font-bold"></h2>
-      <p id="inspect-subtitle" class="text-sm italic mt-2"></p>
-    </div>
-
-    <button id="inspect-audio-btn"
-      class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden px-6 py-3 bg-white/20 backdrop-blur text-white rounded-lg hover:bg-white/30 transition">
-      🔊 Play Sound
-    </button>
-
-    <button onclick="window.closeInspectMode()"
-      class="absolute bottom-10 right-10 px-4 py-2 bg-white/20 backdrop-blur text-white rounded-lg hover:bg-white/30 transition">
-      Exit
-    </button>
-
-    <p class="absolute bottom-10 left-10 text-white/70 text-sm">
-      Drag to Rotate
-    </p>
-  </div>
-
-  <script type="module" src="src/main.js"></script>
-</body>
-
+    <script type="module" src="src/main.js"></script>
+  </body>
 </html>
