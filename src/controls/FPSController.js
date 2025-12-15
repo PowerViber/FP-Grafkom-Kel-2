@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
   PLAYER_SPEED,
   CAMERA_Y_OFFSET,
@@ -20,6 +21,7 @@ export class FPSController {
     this.moveRight = false;
     this.velocity = new THREE.Vector3();
     this.direction = new THREE.Vector3();
+    this.canJump = false;
 
     this.raycaster = new THREE.Raycaster(
       new THREE.Vector3(),
@@ -34,8 +36,48 @@ export class FPSController {
     this.enablePosLogging = true;
     this.suppressInstructions = false;
 
+    // Zoom properties
+    this.minFov = 30;
+    this.maxFov = 75;
+    this.zoomSpeed = 1.0;
+
     this.bindEvents();
     this.setupPointerLock();
+    // this.loadWeapon();
+  }
+
+
+  // template equip senjata
+  loadWeapon() {
+    const loader = new GLTFLoader();
+    loader.load(
+      "./src/assets/kalimantan_mandau.glb",
+      (gltf) => {
+        const weapon = gltf.scene;
+
+        // Position: Right side, slightly down, in front of camera
+        weapon.position.set(0.1, -0.1, -0.35);
+
+        // Scale: Make it look handheld
+        weapon.scale.set(0.5, 0.5, 0.5);
+
+        // Rotation: Pointing forward/slightly inward
+        weapon.rotation.set(0, Math.PI / 2, Math.PI / 2);
+
+        // Prevent weapon from disappearing when "too close" or at edge of screen
+        weapon.traverse((child) => {
+          if (child.isMesh) {
+            child.frustumCulled = false;
+          }
+        });
+
+        this.camera.add(weapon);
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading weapon:", error);
+      }
+    );
   }
 
   bindEvents() {
@@ -45,6 +87,11 @@ export class FPSController {
       false
     );
     document.addEventListener("keyup", (event) => this.onKeyUp(event), false);
+    document.addEventListener(
+      "wheel",
+      (event) => this.onMouseWheel(event),
+      false
+    );
   }
 
   setupPointerLock() {
@@ -77,6 +124,26 @@ export class FPSController {
     });
   }
 
+  onMouseWheel(event) {
+    if (!this.controls.isLocked) return;
+
+    let fov = this.camera.fov;
+
+    // Adjust FOV based on scroll direction
+    // deltaY is positive when scrolling down (zoom out), negative when scrolling up (zoom in)
+    if (event.deltaY > 0) {
+      fov += this.zoomSpeed;
+    } else if (event.deltaY < 0) {
+      fov -= this.zoomSpeed;
+    }
+
+    // Clamp FOV
+    fov = Math.max(this.minFov, Math.min(this.maxFov, fov));
+
+    this.camera.fov = fov;
+    this.camera.updateProjectionMatrix();
+  }
+
   onKeyDown(event) {
     switch (event.code) {
       case "KeyW":
@@ -94,6 +161,10 @@ export class FPSController {
       case "KeyD":
       case "ArrowRight":
         this.moveRight = true;
+        break;
+      case "Space":
+        if (this.canJump === true) this.velocity.y += 25;
+        this.canJump = false;
         break;
     }
   }
@@ -216,7 +287,15 @@ export class FPSController {
     this.controls.moveRight(-this.velocity.x * delta);
     this.controls.moveForward(-this.velocity.z * delta);
 
-    this.controls.getObject().position.y = CAMERA_Y_OFFSET;
+    // Jump Physics
+    this.velocity.y -= 9.8 * 10.0 * delta; // 10.0 = mass
+    this.controls.getObject().position.y += this.velocity.y * delta;
+
+    if (this.controls.getObject().position.y < CAMERA_Y_OFFSET) {
+      this.velocity.y = 0;
+      this.controls.getObject().position.y = CAMERA_Y_OFFSET;
+      this.canJump = true;
+    }
 
     // Periodic console logging of current player position.
     if (this.enablePosLogging) {
