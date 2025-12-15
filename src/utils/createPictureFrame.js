@@ -22,6 +22,7 @@ export function createPictureFrame(parent, config) {
     scale = 5,
     modalContent = "<p>No description available.</p>",
     clickableObjects = null,
+    textureRotation = 0,
   } = config;
 
   const gltfLoader = new GLTFLoader();
@@ -45,9 +46,16 @@ export function createPictureFrame(parent, config) {
         (tex) => {
           tex.encoding = THREE.sRGBEncoding;
           tex.center.set(0.5, 0.5);
+          if (textureRotation) {
+            tex.rotation = textureRotation;
+          }
 
           const planeAspect = imageWidth / imageHeight;
-          const imageAspect = tex.image.width / tex.image.height;
+          // If texture is rotated 90 degrees, swap its aspect ratio for calculation
+          let imageAspect = tex.image.width / tex.image.height;
+          if (Math.abs(textureRotation - Math.PI / 2) < 0.1 || Math.abs(textureRotation + Math.PI / 2) < 0.1) {
+            imageAspect = 1 / imageAspect;
+          }
 
           if (planeAspect > imageAspect) {
             tex.repeat.set(1, imageAspect / planeAspect);

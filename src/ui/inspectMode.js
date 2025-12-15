@@ -13,7 +13,13 @@ const titleEl = document.getElementById("inspect-title");
 const subtitleEl = document.getElementById("inspect-subtitle");
 const audioBtn = document.getElementById("inspect-audio-btn");
 
-export function showInspectMode(modelPath, title, subtitle, audioPath) {
+export function showInspectMode(
+  modelPath,
+  title,
+  subtitle,
+  audioPath,
+  scale = 1
+) {
   if (!modalContainer) return;
 
   // Set title and subtitle
@@ -43,10 +49,10 @@ export function showInspectMode(modelPath, title, subtitle, audioPath) {
   modalContainer.style.display = "block";
 
   // Initialize THREE.js scene
-  initInspectScene(modelPath);
+  initInspectScene(modelPath, scale);
 }
 
-function initInspectScene(modelPath) {
+function initInspectScene(modelPath, customScale = 1) {
   // Create scene
   inspectScene = new THREE.Scene();
   inspectScene.background = new THREE.Color(0x808080);
@@ -100,7 +106,7 @@ function initInspectScene(modelPath) {
       // Scale to fit
       const size = box.getSize(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 3 / maxDim;
+      const scale = (3 / maxDim) * customScale;
       inspectModel.scale.multiplyScalar(scale);
 
       inspectScene.add(inspectModel);
