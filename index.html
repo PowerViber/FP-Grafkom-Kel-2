@@ -43,6 +43,13 @@
           Klik untuk Memulai
         </h2>
 
+        <button
+          id="settings-btn"
+          class="absolute top-5 right-5 z-[101] text-white bg-black/50 p-3 rounded-full hover:bg-black/80 transition"
+        >
+          ⚙️ Settings
+        </button>
+
         <img
           src="src/assets/instructions/asset-left.png"
           alt="asset-left"
@@ -131,6 +138,45 @@
       <p class="absolute bottom-10 left-10 text-white/70 text-sm">
         Drag to Rotate
       </p>
+    </div>
+
+    <div
+      id="settings-modal"
+      class="hidden absolute inset-0 z-[102] bg-black/80 flex justify-center items-center"
+    >
+      <div
+        class="bg-white p-8 rounded-xl max-w-sm w-full text-center font-sans"
+      >
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Settings</h2>
+
+        <div class="mb-6">
+          <label
+            for="volume-slider"
+            class="block text-lg font-semibold mb-2 text-gray-700"
+            >Master Volume</label
+          >
+          <input
+            id="volume-slider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+          <div class="flex justify-between text-sm text-gray-500 mt-1">
+            <span>0%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <button
+          id="close-settings"
+          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
+          Close
+        </button>
+      </div>
     </div>
 
     <script type="module" src="src/main.js"></script>
