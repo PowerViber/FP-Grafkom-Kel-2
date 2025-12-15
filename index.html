@@ -89,21 +89,38 @@
 
     <div
       id="exhibit-modal-container"
-      class="fixed inset-0 hidden justify-center items-center z-[1000]"
+      class="fixed inset-0 hidden flex justify-center items-center z-[1000]"
     >
       <div
-        class="bg-white p-5 rounded-lg w-[80%] max-w-[600px] max-h-[90vh] overflow-y-auto text-gray-800 font-sans"
+        class="relative bg-[#f4e4bc] p-8 rounded border-4 double border-[#8b4513] w-[80%] max-w-[600px] max-h-[90vh] overflow-y-auto shadow-[0_0_30px_rgba(139,69,19,0.3)] font-['Playfair_Display']"
+        style="
+          background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.15%22/%3E%3C/svg%3E');
+          background-blend-mode: multiply;
+        "
       >
-        <div id="exhibit-modal-content" class="mb-4">
+        <div class="border-b-2 border-[#8b4513]/30 pb-4 mb-4 text-center">
+          <h3
+            class="text-2xl font-bold text-[#5d2e0d] uppercase tracking-widest"
+          >
+            Keterangan Artefak
+          </h3>
+        </div>
+
+        <div
+          id="exhibit-modal-content"
+          class="text-[#3e2723] text-lg leading-relaxed"
+        >
           <p>This is where the story about the artifact goes.</p>
         </div>
 
-        <button
-          onclick="window.closeExhibitModal()"
-          class="mt-2 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition"
-        >
-          Close
-        </button>
+        <div class="mt-8 text-center border-t-2 border-[#8b4513]/30 pt-4">
+          <button
+            onclick="window.closeExhibitModal()"
+            class="px-8 py-2 bg-[#8b4513] text-[#f4e4bc] font-bold uppercase tracking-widest text-sm hover:bg-[#6d360f] transition transform hover:scale-105 shadow-md border border-[#5d2e0d]"
+          >
+            Tutup
+          </button>
+        </div>
       </div>
     </div>
 
@@ -161,12 +178,69 @@
             min="0"
             max="1"
             step="0.01"
-            value="1"
+            value="0.5"
             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
           <div class="flex justify-between text-sm text-gray-500 mt-1">
             <span>0%</span>
             <span>100%</span>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label
+            for="speed-slider"
+            class="block text-lg font-semibold mb-2 text-gray-700"
+            >Kecepatan Jalan</label
+          >
+          <input
+            id="speed-slider"
+            type="range"
+            min="1"
+            max="5"
+            step="0.5"
+            value="1.5"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+          <div class="flex justify-between text-sm text-gray-500 mt-1">
+            <span>Pelan</span>
+            <span>Cepat</span>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-lg font-semibold mb-2 text-gray-700">Pindah ke:</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              data-island="Sumatra"
+              class="teleport-btn px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-medium transition"
+            >
+              Sumatra
+            </button>
+            <button
+              data-island="Jawa"
+              class="teleport-btn px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-medium transition"
+            >
+              Jawa
+            </button>
+            <button
+              data-island="Kalimantan"
+              class="teleport-btn px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-medium transition"
+            >
+              Kalimantan
+            </button>
+            <button
+              data-island="Sulawesi"
+              class="teleport-btn px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-medium transition"
+            >
+              Sulawesi
+            </button>
+            <button
+              data-island="Papua"
+              class="teleport-btn px-3 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm font-medium transition col-span-2"
+            >
+              Papua
+            </button>
           </div>
         </div>
 

@@ -12,7 +12,7 @@ export const SEPARATOR_DEPTH = 40;
 export const WALL_THICKNESS = 1;
 
 export const CAMERA_Y_OFFSET = 6.5;
-export const PLAYER_SPEED = 5;
+export const PLAYER_SPEED = 1.5;
 export const PLAYER_HEIGHT = ISLAND_HEIGHT;
 export const COLLISION_PADDING = 0.2;
 

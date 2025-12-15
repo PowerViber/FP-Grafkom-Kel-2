@@ -3,19 +3,15 @@ import { setupScene } from "./scene.js";
 import { setupCamera } from "./camera.js";
 import { setupRenderer } from "./renderer.js";
 import { FPSController } from "./controls/FPSController.js";
-import { POSITIONS } from "./constants.js";
 import { setMasterVolume } from "./utils/audioManager.js";
+import { POSITIONS, ISLAND_DEPTH, CAMERA_Y_OFFSET } from "./constants.js";
 
 import {
   createSumatra,
   playSumatraMusic,
   pauseSumatraMusic,
 } from "./islands/Sumatra.js";
-import {
-  createJawa,
-  playJawaMusic,
-  pauseJawaMusic,
-}from "./islands/Jawa.js";
+import { createJawa, playJawaMusic, pauseJawaMusic } from "./islands/Jawa.js";
 import {
   createKalimantan,
   playKalimantanMusic,
@@ -48,7 +44,6 @@ const mouse = new THREE.Vector2();
 let clickableMeshes = [];
 let allCollidableMeshes = [];
 let currentSection = null; // Track which section the player is in
-
 
 let hoveredObject = null;
 const HOVER_COLOR = 0xffff00;
@@ -90,29 +85,67 @@ function init() {
     controller.controls.lock();
   });
 
-  
   const settingsBtn = document.getElementById("settings-btn");
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsBtn = document.getElementById("close-settings");
   const volumeSlider = document.getElementById("volume-slider");
+  const speedSlider = document.getElementById("speed-slider");
 
   // Open Settings
   settingsBtn.addEventListener("click", () => {
-      settingsModal.classList.remove("hidden");
-      // Optional: Pause game/unlock controls if needed
-      if(controller) controller.controls.unlock();
+    settingsModal.classList.remove("hidden");
+    // Optional: Pause game/unlock controls if needed
+    if (controller) controller.controls.unlock();
   });
 
   // Close Settings
   closeSettingsBtn.addEventListener("click", () => {
-      settingsModal.classList.add("hidden");
-      if(controller) controller.controls.lock(); // Go back to game
+    settingsModal.classList.add("hidden");
+    if (controller) controller.controls.lock(); // Go back to game
   });
 
   // Slider Logic
   volumeSlider.addEventListener("input", (e) => {
-      const value = parseFloat(e.target.value);
-      setMasterVolume(value); // This updates ALL sounds instantly!
+    const value = parseFloat(e.target.value);
+    setMasterVolume(value); // This updates ALL sounds instantly!
+  });
+
+  speedSlider.addEventListener("input", (e) => {
+    const newSpeed = parseFloat(e.target.value);
+
+    if (controller) {
+      controller.moveSpeed = newSpeed;
+    }
+  });
+
+  const teleportBtns = document.querySelectorAll(".teleport-btn");
+  teleportBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const islandName = e.target.getAttribute("data-island");
+      const targetPos = POSITIONS[islandName];
+
+      if (targetPos && controller) {
+        // Calculate Entrance Position
+        const spawnX = targetPos.x;
+        const spawnY = CAMERA_Y_OFFSET;
+        // Enter slightly into the island
+        const spawnZ = targetPos.z + ISLAND_DEPTH / 2 - 5;
+
+        // Teleport the player
+        controller.controls.getObject().position.set(spawnX, spawnY, spawnZ);
+
+        // Stop movement momentum
+        if (controller.velocity) {
+          controller.velocity.set(0, 0, 0);
+        }
+
+        console.log(`Teleported to ${islandName}`);
+
+        // Close modal and lock controls
+        if (settingsModal) settingsModal.classList.add("hidden");
+        controller.controls.lock();
+      }
+    });
   });
 
   animate();
@@ -218,6 +251,13 @@ function onMouseDown() {
   if (clickableHit) {
     const artifact = clickableHit.object;
 
+    // Check for sound playback feature first
+    if (artifact.userData.soundPath) {
+      const audio = new Audio(artifact.userData.soundPath);
+      audio.play().catch((err) => console.error("Error playing audio:", err));
+      return; // Don't show modal if playing sound
+    }
+
     controller.suppressInstructions = true;
 
     controller.controls.unlock();
@@ -253,23 +293,38 @@ window.closeExhibitModal = function () {
     const playerZ = controller.controls.getObject().position.z;
 
     // Check Sumatra
-    if (playerZ >= POSITIONS.Sumatra.z - 50 && playerZ <= POSITIONS.Sumatra.z + 50) {
+    if (
+      playerZ >= POSITIONS.Sumatra.z - 50 &&
+      playerZ <= POSITIONS.Sumatra.z + 50
+    ) {
       playSumatraMusic();
     }
     // Check Jawa
-    else if (playerZ >= POSITIONS.Jawa.z - 50 && playerZ <= POSITIONS.Jawa.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Jawa.z - 50 &&
+      playerZ <= POSITIONS.Jawa.z + 50
+    ) {
       playJawaMusic();
     }
     // Check Kalimantan
-    else if (playerZ >= POSITIONS.Kalimantan.z - 50 && playerZ <= POSITIONS.Kalimantan.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Kalimantan.z - 50 &&
+      playerZ <= POSITIONS.Kalimantan.z + 50
+    ) {
       playKalimantanMusic();
     }
     // Check Sulawesi
-    else if (playerZ >= POSITIONS.Sulawesi.z - 50 && playerZ <= POSITIONS.Sulawesi.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Sulawesi.z - 50 &&
+      playerZ <= POSITIONS.Sulawesi.z + 50
+    ) {
       playSulawesiMusic();
     }
     // Check Papua
-    else if (playerZ >= POSITIONS.Papua.z - 50 && playerZ <= POSITIONS.Papua.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Papua.z - 50 &&
+      playerZ <= POSITIONS.Papua.z + 50
+    ) {
       playPapuaMusic();
     }
   }
@@ -286,24 +341,39 @@ window.closeInspectMode = function () {
     // Resume Sumatra background music if player is in Sumatra section
     const playerZ = controller.controls.getObject().position.z;
 
-   // Check Sumatra
-    if (playerZ >= POSITIONS.Sumatra.z - 50 && playerZ <= POSITIONS.Sumatra.z + 50) {
+    // Check Sumatra
+    if (
+      playerZ >= POSITIONS.Sumatra.z - 50 &&
+      playerZ <= POSITIONS.Sumatra.z + 50
+    ) {
       playSumatraMusic();
     }
     // Check Jawa
-    else if (playerZ >= POSITIONS.Jawa.z - 50 && playerZ <= POSITIONS.Jawa.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Jawa.z - 50 &&
+      playerZ <= POSITIONS.Jawa.z + 50
+    ) {
       playJawaMusic();
     }
     // Check Kalimantan
-    else if (playerZ >= POSITIONS.Kalimantan.z - 50 && playerZ <= POSITIONS.Kalimantan.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Kalimantan.z - 50 &&
+      playerZ <= POSITIONS.Kalimantan.z + 50
+    ) {
       playKalimantanMusic();
     }
     // Check Sulawesi
-    else if (playerZ >= POSITIONS.Sulawesi.z - 50 && playerZ <= POSITIONS.Sulawesi.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Sulawesi.z - 50 &&
+      playerZ <= POSITIONS.Sulawesi.z + 50
+    ) {
       playSulawesiMusic();
     }
     // Check Papua
-    else if (playerZ >= POSITIONS.Papua.z - 50 && playerZ <= POSITIONS.Papua.z + 50) {
+    else if (
+      playerZ >= POSITIONS.Papua.z - 50 &&
+      playerZ <= POSITIONS.Papua.z + 50
+    ) {
       playPapuaMusic();
     }
   }
@@ -400,11 +470,19 @@ function animate() {
     // Auto-play/pause Sumatra background music based on player position
     const playerZ = controller.controls.getObject().position.z;
     // Define the range for every island
-    const inSumatra = playerZ >= POSITIONS.Sumatra.z - 50 && playerZ <= POSITIONS.Sumatra.z + 50;
-    const inJawa = playerZ >= POSITIONS.Jawa.z - 50 && playerZ <= POSITIONS.Jawa.z + 50;
-    const inKalimantan = playerZ >= POSITIONS.Kalimantan.z - 50 && playerZ <= POSITIONS.Kalimantan.z + 50;
-    const inSulawesi = playerZ >= POSITIONS.Sulawesi.z - 50 && playerZ <= POSITIONS.Sulawesi.z + 50;
-    const inPapua = playerZ >= POSITIONS.Papua.z - 50 && playerZ <= POSITIONS.Papua.z + 50;
+    const inSumatra =
+      playerZ >= POSITIONS.Sumatra.z - 50 &&
+      playerZ <= POSITIONS.Sumatra.z + 50;
+    const inJawa =
+      playerZ >= POSITIONS.Jawa.z - 50 && playerZ <= POSITIONS.Jawa.z + 50;
+    const inKalimantan =
+      playerZ >= POSITIONS.Kalimantan.z - 50 &&
+      playerZ <= POSITIONS.Kalimantan.z + 50;
+    const inSulawesi =
+      playerZ >= POSITIONS.Sulawesi.z - 50 &&
+      playerZ <= POSITIONS.Sulawesi.z + 50;
+    const inPapua =
+      playerZ >= POSITIONS.Papua.z - 50 && playerZ <= POSITIONS.Papua.z + 50;
 
     // Check which section we are in
     let newSection = null;
@@ -416,7 +494,6 @@ function animate() {
 
     // If we changed sections (entered a new one or left one)
     if (newSection !== currentSection) {
-        
       // 1. Stop the OLD music
       if (currentSection === "Sumatra") pauseSumatraMusic();
       if (currentSection === "Jawa") pauseJawaMusic();
