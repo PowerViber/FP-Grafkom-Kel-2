@@ -9,15 +9,14 @@ import TALAWANG_CONTENT from "../content/kalimantan_talawang.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
 import { registerSound } from "../utils/audioManager.js";
-
-// Global reference to background music
-let kalimantanBackgroundMusic = null;
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createClickableObject } from "../utils/createClickableObject.js";
 import MANDAU_CONTENT from "../content/kalimantan_mandau.js";
 import SAPEK_CONTENT from "../content/kalimantan_sapek.js";
 import SHIELD_CONTENT from "../content/kalimantan_shield.js";
 import REBAB_CONTENT from "../content/kalimantan_rebab.js";
+
+let kalimantanBackgroundMusic = null;
 
 export function createKalimantan(clickableObjectsArray) {
   const kalimantanBlock = createBlock("Kalimantan");
