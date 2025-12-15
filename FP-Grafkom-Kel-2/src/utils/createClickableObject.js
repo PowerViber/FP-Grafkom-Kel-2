@@ -6,12 +6,14 @@ import * as THREE from "three";
  * @param {string} modelPath - Path to the GLB/GLTF file.
  * @param {string} htmlContent - The raw HTML string for the modal content.
  * @param {Array<THREE.Mesh>} clickableObjectsArray - The array to store the clickable mesh reference.
+ * @param {Object} [inspectData] - Optional data for inspect mode (modelPath, title, subtitle, audioPath).
  * @returns {Promise<THREE.Object3D>} A Promise that resolves with the loaded model's scene.
  */
 export function createClickableObject(
   modelPath,
   htmlContent,
-  clickableObjectsArray
+  clickableObjectsArray,
+  inspectData = null
 ) {
   const loader = new GLTFLoader();
 
@@ -25,6 +27,9 @@ export function createClickableObject(
           if (child.isMesh) {
             child.userData.isClickable = true;
             child.userData.modalContent = htmlContent;
+            if (inspectData) {
+              child.userData.inspectData = inspectData;
+            }
             clickableObjectsArray.push(child);
           }
         });

@@ -5,11 +5,30 @@ import { createClickableObject } from "../utils/createClickableObject.js";
 import BADIK_CONTENT from "../content/sulawesi_badik.js";
 import ADAT_TORAJA_CONTENT from "../content/sulawesi_adat_toraja.js";
 import KECAPI_CONTENT from "../content/sulawesi_kecapi.js";
+import JALAPPA_CONTENT from "../content/sulawesi_jalappa.js";
+import PUIKPUIK_CONTENT from "../content/sulawesi_puikpuik.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
 
+// Global reference to background music
+let sulawesiBackgroundMusic = null;
+
 export function createSulawesi(clickableObjectsArray) {
   const sulawesiBlock = createBlock("Sulawesi");
+
+  // Initialize background music with preload to prevent lag
+  sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_angin_mamiri.mp3");
+  sulawesiBackgroundMusic.loop = true;
+  sulawesiBackgroundMusic.volume = 0.3;
+  sulawesiBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  sulawesiBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Sulawesi background music:", e);
+  });
+
+  // Store reference in userData
+  sulawesiBlock.userData.backgroundMusic = sulawesiBackgroundMusic;
 
   const zPositions = [
     {
@@ -23,12 +42,48 @@ export function createSulawesi(clickableObjectsArray) {
       model: "./src/assets/sulawesi_badik.glb",
       content: BADIK_CONTENT,
       name: "Sulawesi-Badik",
+      inspectData: {
+        modelPath: "./src/assets/sulawesi_badik.glb",
+        title: "Badik",
+        subtitle: "Senjata Tradisional",
+        audioPath: null,
+      },
     },
     {
       z: -10,
       model: "./src/assets/sulawesi_kecapi.glb",
       content: KECAPI_CONTENT,
       name: "Sulawesi-Kecapi",
+      inspectData: {
+        modelPath: "./src/assets/sulawesi_kecapi.glb",
+        title: "Kecapi",
+        subtitle: "Alat Musik Petik",
+        audioPath: "./src/assets/sulawesi_kecapi.mp3",
+      },
+    },
+    {
+      z: -20,
+      model: "./src/assets/sulawesi_jalappa.glb",
+      content: JALAPPA_CONTENT,
+      name: "Sulawesi-Jalappa",
+      inspectData: {
+        modelPath: "./src/assets/sulawesi_jalappa.glb",
+        title: "Jalappa",
+        subtitle: "Alat Musik Pukul",
+        audioPath: "./src/assets/sulawesi_jalappa.mp3", // Assuming this exists or will exist
+      },
+    },
+    {
+      z: -30,
+      model: "./src/assets/sulawesi_puikpuik.glb",
+      content: PUIKPUIK_CONTENT,
+      name: "Sulawesi-Puikpuik",
+      inspectData: {
+        modelPath: "./src/assets/sulawesi_puikpuik.glb",
+        title: "Puik-Puik",
+        subtitle: "Alat Musik Tiup",
+        audioPath: "./src/assets/sulawesi_puikpuik.mp3", // Assuming this exists or will exist
+      },
     },
   ];
 
@@ -49,12 +104,12 @@ export function createSulawesi(clickableObjectsArray) {
   loader.load("./src/assets/display_case.glb", (gltf) => {
     const baseModel = gltf.scene;
 
-    zPositions.forEach(({ z, model, content, name }) => {
+    zPositions.forEach(({ z, model, content, name, inspectData }) => {
       const displayCase = baseModel.clone();
       displayCase.scale.set(3.5, 3.5, 3.5);
       displayCase.position.set(xPosition, 0, z);
 
-      createClickableObject(model, content, clickableObjectsArray)
+      createClickableObject(model, content, clickableObjectsArray, inspectData)
         .then((artifact) => {
           if (name.includes("Badik")) {
             // --- AREA DEBUGGING ---
@@ -74,6 +129,24 @@ export function createSulawesi(clickableObjectsArray) {
             artifact.scale.set(0.1, 0.1, 0.1);
             artifact.position.set(0, 0.75, 0);
             artifact.rotation.set(0, Math.PI, Math.PI / 2);
+          } else if (name.includes("Jalappa")) {
+            artifact.scale.set(0.01, 0.01, 0.01);
+            artifact.position.set(0, 0.5, 0);
+            artifact.rotation.set(0, Math.PI / 2, 0);
+            artifact.traverse((child) => {
+              if (child.isMesh) {
+                child.material.side = THREE.DoubleSide; // Ensure visibility
+              }
+            });
+          } else if (name.includes("Puikpuik")) {
+            artifact.scale.set(0.01, 0.01, 0.01);
+            artifact.position.set(0, 0.55, 0);
+            artifact.rotation.set(0, Math.PI / 2, 0);
+            artifact.traverse((child) => {
+              if (child.isMesh) {
+                child.material.side = THREE.DoubleSide; // Ensure visibility
+              }
+            });
           }
 
           artifact.name = name;
@@ -262,4 +335,23 @@ export function createSulawesi(clickableObjectsArray) {
   });
 
   return sulawesiBlock;
+}
+
+// Export functions to control background music
+export function playSulawesiMusic() {
+  if (sulawesiBackgroundMusic && sulawesiBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (sulawesiBackgroundMusic.readyState >= 2) {
+      // HAVE_CURRENT_DATA or higher
+      sulawesiBackgroundMusic.play().catch((err) => {
+        console.log("Sulawesi music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pauseSulawesiMusic() {
+  if (sulawesiBackgroundMusic && !sulawesiBackgroundMusic.paused) {
+    sulawesiBackgroundMusic.pause();
+  }
 }

@@ -3,12 +3,16 @@ import { setupScene } from "./scene.js";
 import { setupCamera } from "./camera.js";
 import { setupRenderer } from "./renderer.js";
 import { FPSController } from "./controls/FPSController.js";
-import { POSITIONS } from "./constants.js";
+import { POSITIONS, ISLAND_DEPTH } from "./constants.js";
 
 import { createSumatra } from "./islands/Sumatra.js";
 import { createJawa } from "./islands/Jawa.js";
 import { createKalimantan } from "./islands/Kalimantan.js";
-import { createSulawesi } from "./islands/Sulawesi.js";
+import {
+  createSulawesi,
+  playSulawesiMusic,
+  pauseSulawesiMusic,
+} from "./islands/Sulawesi.js";
 import { createPapua } from "./islands/Papua.js";
 
 import { createSeparatorSumatraJawa } from "./separators/SeparatorSumatraJawa.js";
@@ -174,7 +178,7 @@ function onMouseDown() {
     controller.controls.unlock();
     controller.enabled = false;
 
-    showModal(artifact.userData.modalContent);
+    showModal(artifact.userData.modalContent, artifact.userData.inspectData);
   }
 }
 
@@ -186,6 +190,48 @@ window.closeExhibitModal = function () {
     controller.enabled = true;
   }
 };
+
+window.returnToTour = function () {
+  if (controller) {
+    controller.controls.lock();
+    controller.enabled = true;
+  }
+};
+
+let wasInsideSulawesi = false;
+let triggerCheckCounter = 0;
+
+function checkMusicTriggers() {
+  if (!controller) return;
+
+  // Throttle check: only run every 10 frames
+  triggerCheckCounter++;
+  if (triggerCheckCounter % 10 !== 0) return;
+
+  const playerPos = controller.controls.getObject().position;
+  const sulawesiZ = POSITIONS["Sulawesi"].z;
+  const halfDepth = ISLAND_DEPTH / 2;
+
+  const isInsideSulawesi =
+    playerPos.z >= sulawesiZ - halfDepth &&
+    playerPos.z <= sulawesiZ + halfDepth;
+
+  // Only trigger on state change
+  if (isInsideSulawesi !== wasInsideSulawesi) {
+    wasInsideSulawesi = isInsideSulawesi;
+
+    if (isInsideSulawesi) {
+      playSulawesiMusic();
+      window.bgMusicControls = {
+        play: playSulawesiMusic,
+        pause: pauseSulawesiMusic,
+      };
+    } else {
+      pauseSulawesiMusic();
+      window.bgMusicControls = null;
+    }
+  }
+}
 
 function updateCrosshairInteraction(time) {
   raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
@@ -203,16 +249,27 @@ function updateCrosshairInteraction(time) {
 
       hoveredObject = object;
 
-      if (!hoveredObject.userData.originalEmissive) {
+      if (
+        hoveredObject.material &&
+        hoveredObject.material.emissive &&
+        !hoveredObject.userData.originalEmissive
+      ) {
         hoveredObject.userData.originalEmissive =
           hoveredObject.material.emissive.clone();
       }
 
-      hoveredObject.material.emissive.setHex(HOVER_COLOR);
+      if (hoveredObject.material && hoveredObject.material.emissive) {
+        hoveredObject.material.emissive.setHex(HOVER_COLOR);
+        const pulse = Math.sin(time * 5) * 0.1 + 0.3;
+        hoveredObject.material.emissiveIntensity = pulse;
+      }
+    } else {
+      // Hovering same object, just update pulse
+      if (hoveredObject.material && hoveredObject.material.emissive) {
+        const pulse = Math.sin(time * 5) * 0.1 + 0.3;
+        hoveredObject.material.emissiveIntensity = pulse;
+      }
     }
-
-    const pulse = Math.sin(time * 5) * 0.1 + 0.3;
-    hoveredObject.material.emissiveIntensity = pulse;
   } else {
     if (hoveredObject) {
       resetObjectMaterial(hoveredObject);
@@ -222,12 +279,14 @@ function updateCrosshairInteraction(time) {
 }
 
 function resetObjectMaterial(object) {
-  if (object.userData.originalEmissive) {
-    object.material.emissive.copy(object.userData.originalEmissive);
-  } else {
-    object.material.emissive.setHex(0x000000);
+  if (object.material && object.material.emissive) {
+    if (object.userData.originalEmissive) {
+      object.material.emissive.copy(object.userData.originalEmissive);
+    } else {
+      object.material.emissive.setHex(0x000000);
+    }
+    object.material.emissiveIntensity = 0;
   }
-  object.material.emissiveIntensity = 0;
 }
 
 function animate() {
@@ -239,6 +298,7 @@ function animate() {
   if (controller && controller.enabled) {
     controller.update(delta);
     updateCrosshairInteraction(time);
+    checkMusicTriggers();
   }
 
   // Simple preview animation: rotate any model marked for preview.

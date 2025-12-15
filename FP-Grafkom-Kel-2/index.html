@@ -100,6 +100,46 @@
       </div>
     </div>
 
+    <div
+      id="inspect-modal-container"
+      class="fixed inset-0 z-[2000] hidden bg-gray-900"
+    >
+      <div id="inspect-3d-container" class="absolute inset-0 z-0"></div>
+
+      <div
+        class="absolute top-0 left-0 w-full h-full z-10 pointer-events-none p-10 flex flex-col justify-between"
+      >
+        <div class="flex justify-between items-start">
+          <div class="pointer-events-auto">
+            <h2
+              id="inspect-title"
+              class="text-4xl text-white font-bold title-font"
+            >
+              Title
+            </h2>
+            <p id="inspect-subtitle" class="text-xl text-gray-300 mt-2">
+              Subtitle
+            </p>
+          </div>
+          <button
+            onclick="window.closeInspectMode()"
+            class="pointer-events-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Close (ESC)
+          </button>
+        </div>
+
+        <div class="flex justify-center mb-10">
+          <button
+            id="inspect-audio-btn"
+            class="pointer-events-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center gap-2 hidden"
+          >
+            Play Sound
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="src/main.js"></script>
   </body>
 </html>
