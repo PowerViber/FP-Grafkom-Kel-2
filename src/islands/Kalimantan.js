@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
+import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { registerSound } from "../utils/audioManager.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createClickableObject } from "../utils/createClickableObject.js";
 import MANDAU_CONTENT from "../content/kalimantan_mandau.js";
@@ -9,13 +11,8 @@ import TALAWANG_CONTENT from "../content/kalimantan_talawang.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
 import { registerSound } from "../utils/audioManager.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { createClickableObject } from "../utils/createClickableObject.js";
-import MANDAU_CONTENT from "../content/kalimantan_mandau.js";
-import SAPEK_CONTENT from "../content/kalimantan_sapek.js";
-import SHIELD_CONTENT from "../content/kalimantan_shield.js";
-import REBAB_CONTENT from "../content/kalimantan_rebab.js";
 
+// Global reference to background music
 let kalimantanBackgroundMusic = null;
 
 export function createKalimantan(clickableObjectsArray) {
