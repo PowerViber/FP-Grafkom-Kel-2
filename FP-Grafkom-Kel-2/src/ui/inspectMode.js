@@ -4,6 +4,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let inspectScene, inspectCamera, inspectRenderer, inspectControls;
 let currentAudio = null;
+let currentInteractiveConfig = null;
 let inspectModel = null;
 
 const modalContainer = document.getElementById("inspect-modal-container");
@@ -12,7 +13,7 @@ const titleEl = document.getElementById("inspect-title");
 const subtitleEl = document.getElementById("inspect-subtitle");
 const audioBtn = document.getElementById("inspect-audio-btn");
 
-export function showInspectMode(modelPath, title, subtitle, audioPath) {
+export function showInspectMode(modelPath, title, subtitle, audioPath, interactiveConfig = null) {
     if (!modalContainer) return;
 
     // Set title and subtitle
@@ -20,22 +21,31 @@ export function showInspectMode(modelPath, title, subtitle, audioPath) {
     subtitleEl.textContent = subtitle;
 
     // Setup audio button
+    currentInteractiveConfig = interactiveConfig;
+
     if (audioPath) {
         audioBtn.classList.remove("hidden");
         currentAudio = new Audio(audioPath);
 
-        audioBtn.onclick = () => {
-            if (currentAudio.paused) {
-                currentAudio.play();
-                audioBtn.textContent = " Stop Sound";
-            } else {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                audioBtn.textContent = " Play Sound";
-            }
-        };
+        // Custom button behavior
+        if (currentInteractiveConfig && (currentInteractiveConfig.type === 'kecapi' || currentInteractiveConfig.type === 'jalappa' || currentInteractiveConfig.type === 'puikpuik')) {
+            // Hide main button, interaction is via clicking model
+            audioBtn.classList.add("hidden");
+        } else {
+            audioBtn.onclick = () => {
+                if (currentAudio.paused) {
+                    currentAudio.play();
+                    audioBtn.textContent = " Stop Sound";
+                } else {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    audioBtn.textContent = " Play Sound";
+                }
+            };
+        }
     } else {
         audioBtn.classList.add("hidden");
+        currentAudio = null;
     }
 
     // Show modal
@@ -113,17 +123,17 @@ function initInspectScene(modelPath) {
             const size = box.getSize(new THREE.Vector3());
             const center = box.getCenter(new THREE.Vector3());
 
-            // Center the model by offsetting its position
-            // We subtract the center vector to move the geometric center to (0,0,0)
-            inspectModel.position.x -= center.x;
-            inspectModel.position.y -= center.y;
-            inspectModel.position.z -= center.z;
-
             // Normalize scale to fit within a standard view
             const maxDim = Math.max(size.x, size.y, size.z);
             const targetSize = 3; // Target size in scene units
             const scale = targetSize / maxDim;
             inspectModel.scale.setScalar(scale);
+
+            // Center the model by offsetting its position
+            // We must account for the scale when centering: P = -Center * Scale
+            inspectModel.position.x = -center.x * scale;
+            inspectModel.position.y = -center.y * scale;
+            inspectModel.position.z = -center.z * scale;
 
             // Adjust camera Z based on object size and FOV to ensure visibility
             const fov = inspectCamera.fov * (Math.PI / 180);
@@ -159,13 +169,12 @@ function initInspectScene(modelPath) {
 }
 
 function onInspectClick(event) {
-    if (!currentAudio || !inspectModel) return;
+    if (!inspectModel) return;
 
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
 
-    // Calculate mouse position in normalized device coordinates
-    // (-1 to +1) for both components
+    // Calculate mouse position
     const rect = inspectRenderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -175,15 +184,62 @@ function onInspectClick(event) {
     const intersects = raycaster.intersectObject(inspectModel, true);
 
     if (intersects.length > 0) {
-        // Toggle audio
-        const audioBtn = document.getElementById("inspect-audio-btn");
-        if (currentAudio.paused) {
-            currentAudio.play();
-            if (audioBtn) audioBtn.textContent = " Stop Sound";
-        } else {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-            if (audioBtn) audioBtn.textContent = " Play Sound";
+        // Interactive Logic for Kecapi
+        if (currentInteractiveConfig && currentInteractiveConfig.type === 'kecapi') {
+            const point = intersects[0].point;
+
+            // Determine major axis
+            const box = new THREE.Box3().setFromObject(inspectModel);
+            const size = box.getSize(new THREE.Vector3());
+            const min = box.min;
+            const maxDim = Math.max(size.x, size.y, size.z);
+
+            // Normalize click position along the major axis (0 to 1)
+            let relativePos = 0;
+            if (maxDim === size.x) {
+                relativePos = (point.x - min.x) / size.x;
+            } else if (maxDim === size.y) {
+                relativePos = (point.y - min.y) / size.y;
+            } else {
+                relativePos = (point.z - min.z) / size.z;
+            }
+
+            // Clamp 0-1
+            relativePos = Math.max(0, Math.min(1, relativePos));
+
+            // Map to zones
+            const zones = currentInteractiveConfig.zones || 8;
+            const zoneIndex = Math.floor(relativePos * zones);
+
+            // Play specific file from map
+            if (currentInteractiveConfig.audioMap && currentInteractiveConfig.audioMap[zoneIndex]) {
+                const audioSrc = currentInteractiveConfig.audioMap[zoneIndex];
+                const noteAudio = new Audio(audioSrc);
+                noteAudio.play().catch(e => console.error("Audio play failed", e));
+            }
+
+        }
+        // Interactive Logic for Jalappa and Puikpuik
+        else if (currentInteractiveConfig && (currentInteractiveConfig.type === 'jalappa' || currentInteractiveConfig.type === 'puikpuik')) {
+            // Simple percussion/trigger
+            if (currentAudio) {
+                const noteAudio = currentAudio.cloneNode();
+                noteAudio.play().catch(e => console.error("Audio play failed", e));
+            }
+        }
+        // Default Logic (Toggle main audio)
+        else {
+            const audioBtn = document.getElementById("inspect-audio-btn");
+            if (currentAudio) {
+                if (currentAudio.paused) {
+                    currentAudio.play();
+                    if (audioBtn) audioBtn.textContent = " Stop Sound";
+                } else {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    if (audioBtn) audioBtn.textContent = " Play Sound";
+                }
+            }
         }
     }
 }
@@ -215,6 +271,7 @@ export function closeInspectMode() {
         currentAudio.currentTime = 0;
         currentAudio = null;
     }
+    currentInteractiveConfig = null;
 
     // Cleanup THREE.js resources
     if (inspectRenderer) {

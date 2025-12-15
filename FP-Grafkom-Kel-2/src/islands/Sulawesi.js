@@ -58,7 +58,21 @@ export function createSulawesi(clickableObjectsArray) {
         modelPath: "./src/assets/sulawesi_kecapi.glb",
         title: "Kecapi",
         subtitle: "Alat Musik Petik",
-        audioPath: "./src/assets/sulawesi_kecapi.mp3",
+        audioPath: null,
+        interactiveConfig: {
+          type: 'kecapi',
+          zones: 8,
+          audioMap: [
+            "./src/assets/sulawesi_kecapi_do.mp3",
+            "./src/assets/sulawesi_kecapi_re.mp3",
+            "./src/assets/sulawesi_kecapi_mi.mp3",
+            "./src/assets/sulawesi_kecapi_fa.mp3",
+            "./src/assets/sulawesi_kecapi_so.mp3",
+            "./src/assets/sulawesi_kecapi_la.mp3",
+            "./src/assets/sulawesi_kecapi_si.mp3",
+            "./src/assets/sulawesi_kecapi_doo.mp3",
+          ],
+        },
       },
     },
     {
@@ -70,7 +84,8 @@ export function createSulawesi(clickableObjectsArray) {
         modelPath: "./src/assets/sulawesi_jalappa.glb",
         title: "Jalappa",
         subtitle: "Alat Musik Pukul",
-        audioPath: "./src/assets/sulawesi_jalappa.mp3", // Assuming this exists or will exist
+        audioPath: "./src/assets/sulawesi_jalappa.mp3",
+        interactiveConfig: { type: 'jalappa' },
       },
     },
     {
@@ -82,7 +97,8 @@ export function createSulawesi(clickableObjectsArray) {
         modelPath: "./src/assets/sulawesi_puikpuik.glb",
         title: "Puik-Puik",
         subtitle: "Alat Musik Tiup",
-        audioPath: "./src/assets/sulawesi_puikpuik.mp3", // Assuming this exists or will exist
+        audioPath: "./src/assets/sulawesi_puikpuik.mp3",
+        interactiveConfig: { type: 'puikpuik' },
       },
     },
   ];
