@@ -15,7 +15,7 @@ export function createPapua(clickableObjectsArray) {
   const papuaBlock = createBlock("Papua");
 
   // Ganti jadi audio yang sesuai daerah kalian
-  papuaBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  papuaBackgroundMusic = new Audio("./src/assets/papua_bgm.mp3");
   papuaBackgroundMusic.loop = true;
   //Ganti volume default daerah kalian disini
   registerSound(papuaBackgroundMusic, 0.3);

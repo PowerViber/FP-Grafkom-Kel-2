@@ -406,18 +406,6 @@ function animate() {
     const inSulawesi = playerZ >= POSITIONS.Sulawesi.z - 50 && playerZ <= POSITIONS.Sulawesi.z + 50;
     const inPapua = playerZ >= POSITIONS.Papua.z - 50 && playerZ <= POSITIONS.Papua.z + 50;
 
-    if (inSumatra && currentSection !== "Sumatra") {
-      // Player just entered Sumatra section
-      console.log("Entering Sumatra section - starting music");
-      currentSection = "Sumatra";
-      playSumatraMusic();
-    } else if (!inSumatra && currentSection === "Sumatra") {
-      // Player just left Sumatra section
-      console.log("Leaving Sumatra section - pausing music");
-      currentSection = null;
-      pauseSumatraMusic();
-    }
-    
     // Check which section we are in
     let newSection = null;
     if (inSumatra) newSection = "Sumatra";

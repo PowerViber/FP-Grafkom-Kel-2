@@ -13,7 +13,7 @@ export function createSulawesi(clickableObjectsArray) {
   const sulawesiBlock = createBlock("Sulawesi");
   
   // Ganti jadi audio yang sesuai daerah kalian
-  sulawesiBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_bgm.mp3");
   sulawesiBackgroundMusic.loop = true;
   //Ganti volume default daerah kalian disini
   registerSound(sulawesiBackgroundMusic, 0.3);

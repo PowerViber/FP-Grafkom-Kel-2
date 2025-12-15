@@ -14,7 +14,7 @@ export function createJawa(clickableObjectsArray) {
   const jawaBlock = createBlock("Jawa");
 
    // Ganti jadi audio yang sesuai daerah kalian
-  jawaBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  jawaBackgroundMusic = new Audio("./src/assets/jawa_bgm.mp3");
   jawaBackgroundMusic.loop = true;
   //Ganti volume default daerah kalian disini
   registerSound(jawaBackgroundMusic, 0.3);

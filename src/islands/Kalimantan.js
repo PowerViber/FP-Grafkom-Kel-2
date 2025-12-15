@@ -9,7 +9,7 @@ export function createKalimantan() {
   const kalimantanBlock = createBlock("Kalimantan");
 
    // Ganti jadi audio yang sesuai daerah kalian
-  kalimantanBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  kalimantanBackgroundMusic = new Audio("./src/assets/kalimantan_bgm.mp3");
   kalimantanBackgroundMusic.loop = true;
   //Ganti volume default daerah kalian disini
   registerSound(kalimantanBackgroundMusic, 0.3);
