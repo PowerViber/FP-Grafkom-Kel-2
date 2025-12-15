@@ -6,9 +6,27 @@ import SARON_CONTENT from "../content/jawa_saron.js";
 import KENDANG_CONTENT from "../content/jawa_kendang.js";
 import KERIS_CONTENT from "../content/jawa_keris.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { registerSound } from "../utils/audioManager.js";
+
+let jawaBackgroundMusic = null;
 
 export function createJawa(clickableObjectsArray) {
   const jawaBlock = createBlock("Jawa");
+
+   // Ganti jadi audio yang sesuai daerah kalian
+  jawaBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  jawaBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(jawaBackgroundMusic, 0.3);
+  jawaBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  jawaBackgroundMusic.addEventListener('error', (e) => {
+    console.error('Error loading Jawa background music:', e);
+  });
+
+  // Store reference in userData
+  jawaBlock.userData.backgroundMusic = jawaBackgroundMusic;
 
   const zPositions = [
     {
@@ -118,4 +136,22 @@ export function createJawa(clickableObjectsArray) {
   });
 
   return jawaBlock;
+}
+
+// Export functions to control background music
+export function playJawaMusic() {
+  if (jawaBackgroundMusic && jawaBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (jawaBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      jawaBackgroundMusic.play().catch(err => {
+        console.log("Sumatra music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pauseJawaMusic() {
+  if (jawaBackgroundMusic && !jawaBackgroundMusic.paused) {
+    jawaBackgroundMusic.pause();
+  }
 }

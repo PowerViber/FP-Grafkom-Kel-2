@@ -1,9 +1,27 @@
 import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { registerSound } from "../utils/audioManager.js";
+
+let kalimantanBackgroundMusic = null;
 
 export function createKalimantan() {
   const kalimantanBlock = createBlock("Kalimantan");
+
+   // Ganti jadi audio yang sesuai daerah kalian
+  kalimantanBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
+  kalimantanBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(kalimantanBackgroundMusic, 0.3);
+  kalimantanBackgroundMusic.preload = "auto";
+  
+  // Add error handler to prevent crashes
+  kalimantanBackgroundMusic.addEventListener('error', (e) => {
+    console.error('Error loading Kalimantan background music:', e);
+  });
+
+  // Store reference in userData
+  kalimantanBlock.userData.backgroundMusic = kalimantanBackgroundMusic;
 
   const textureLoader = new THREE.TextureLoader();
 
@@ -48,4 +66,22 @@ export function createKalimantan() {
   });
 
   return kalimantanBlock;
+}
+
+// Export functions to control background music
+export function playKalimantanMusic() {
+  if (kalimantanBackgroundMusic && kalimantanBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (kalimantanBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      kalimantanBackgroundMusic.play().catch(err => {
+        console.log("Sumatra music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pauseKalimantanMusic() {
+  if (kalimantanBackgroundMusic && !kalimantanBackgroundMusic.paused) {
+    kalimantanBackgroundMusic.pause();
+  }
 }
