@@ -7,14 +7,6 @@ import REBAB_CONTENT from "../content/kalimantan_rebab.js";
 import SAPE_CONTENT from "../content/kalimantan_sapek.js";
 import TALAWANG_CONTENT from "../content/kalimantan_talawang.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
-import { registerSound } from "../utils/audioManager.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { createClickableObject } from "../utils/createClickableObject.js";
-import MANDAU_CONTENT from "../content/kalimantan_mandau.js";
-import REBAB_CONTENT from "../content/kalimantan_rebab.js";
-import SAPE_CONTENT from "../content/kalimantan_sapek.js";
-import TALAWANG_CONTENT from "../content/kalimantan_talawang.js";
-import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
 import { registerSound } from "../utils/audioManager.js";
 
