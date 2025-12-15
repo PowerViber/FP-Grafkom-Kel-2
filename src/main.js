@@ -203,16 +203,19 @@ function updateCrosshairInteraction(time) {
 
       hoveredObject = object;
 
-      if (!hoveredObject.userData.originalEmissive) {
-        hoveredObject.userData.originalEmissive =
-          hoveredObject.material.emissive.clone();
+      if (hoveredObject.material && hoveredObject.material.emissive) {
+        if (!hoveredObject.userData.originalEmissive) {
+          hoveredObject.userData.originalEmissive =
+            hoveredObject.material.emissive.clone();
+        }
+        hoveredObject.material.emissive.setHex(HOVER_COLOR);
       }
-
-      hoveredObject.material.emissive.setHex(HOVER_COLOR);
     }
 
-    const pulse = Math.sin(time * 5) * 0.1 + 0.3;
-    hoveredObject.material.emissiveIntensity = pulse;
+    if (hoveredObject.material && hoveredObject.material.emissive) {
+      const pulse = Math.sin(time * 5) * 0.1 + 0.3;
+      hoveredObject.material.emissiveIntensity = pulse;
+    }
   } else {
     if (hoveredObject) {
       resetObjectMaterial(hoveredObject);
@@ -222,6 +225,8 @@ function updateCrosshairInteraction(time) {
 }
 
 function resetObjectMaterial(object) {
+  if (!object.material || !object.material.emissive) return;
+
   if (object.userData.originalEmissive) {
     object.material.emissive.copy(object.userData.originalEmissive);
   } else {
