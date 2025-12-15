@@ -5,7 +5,11 @@ import { setupRenderer } from "./renderer.js";
 import { FPSController } from "./controls/FPSController.js";
 import { POSITIONS } from "./constants.js";
 
-import { createSumatra } from "./islands/Sumatra.js";
+import {
+  createSumatra,
+  playSumatraMusic,
+  pauseSumatraMusic,
+} from "./islands/Sumatra.js";
 import { createJawa } from "./islands/Jawa.js";
 import { createKalimantan } from "./islands/Kalimantan.js";
 import { createSulawesi } from "./islands/Sulawesi.js";
@@ -17,6 +21,7 @@ import { createSeparatorKalimantanSulawesi } from "./separators/SeparatorKaliman
 import { createSeparatorSulawesiPapua } from "./separators/SeparatorSulawesiPapua.js";
 
 import { showModal, hideModal } from "./ui/modal.js";
+import { closeInspectMode } from "./ui/inspectMode.js";
 
 let camera, scene, renderer, controller;
 const clock = new THREE.Clock();
@@ -25,6 +30,7 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let clickableMeshes = [];
 let allCollidableMeshes = [];
+let currentSection = null; // Track which section the player is in
 
 let hoveredObject = null;
 const HOVER_COLOR = 0xffff00;
@@ -174,7 +180,18 @@ function onMouseDown() {
     controller.controls.unlock();
     controller.enabled = false;
 
-    showModal(artifact.userData.modalContent);
+    // Pause Sumatra background music when modal opens
+    pauseSumatraMusic();
+
+    // Pass inspect data to modal if available
+    const inspectData = artifact.userData.inspectData
+      ? {
+          modelPath: artifact.userData.modelPath,
+          ...artifact.userData.inspectData,
+        }
+      : null;
+
+    showModal(artifact.userData.modalContent, inspectData);
   }
 }
 
@@ -184,6 +201,34 @@ window.closeExhibitModal = function () {
   if (controller) {
     controller.controls.lock();
     controller.enabled = true;
+
+    // Resume Sumatra background music if player is in Sumatra section
+    const playerZ = controller.controls.getObject().position.z;
+    const sumatraMinZ = POSITIONS.Sumatra.z - 50;
+    const sumatraMaxZ = POSITIONS.Sumatra.z + 50;
+
+    if (playerZ >= sumatraMinZ && playerZ <= sumatraMaxZ) {
+      playSumatraMusic();
+    }
+  }
+};
+
+// Global function for inspect mode
+window.closeInspectMode = function () {
+  closeInspectMode();
+
+  if (controller) {
+    controller.controls.lock();
+    controller.enabled = true;
+
+    // Resume Sumatra background music if player is in Sumatra section
+    const playerZ = controller.controls.getObject().position.z;
+    const sumatraMinZ = POSITIONS.Sumatra.z - 50;
+    const sumatraMaxZ = POSITIONS.Sumatra.z + 50;
+
+    if (playerZ >= sumatraMinZ && playerZ <= sumatraMaxZ) {
+      playSumatraMusic();
+    }
   }
 };
 
@@ -203,16 +248,43 @@ function updateCrosshairInteraction(time) {
 
       hoveredObject = object;
 
-      if (hoveredObject.material && hoveredObject.material.emissive) {
+      // Ensure material exists and has emissive property
+      if (hoveredObject.material) {
+        // If material doesn't have emissive, ensure it's added
+        if (!hoveredObject.material.emissive) {
+          // Convert to MeshStandardMaterial or MeshPhongMaterial if needed
+          if (hoveredObject.material.isMeshBasicMaterial) {
+            const oldMaterial = hoveredObject.material;
+            hoveredObject.material = new THREE.MeshPhongMaterial({
+              map: oldMaterial.map,
+              color: oldMaterial.color,
+              emissive: new THREE.Color(0x000000),
+              emissiveIntensity: 0,
+            });
+          } else if (!hoveredObject.material.emissive) {
+            hoveredObject.material.emissive = new THREE.Color(0x000000);
+            hoveredObject.material.emissiveIntensity = 0;
+          }
+        }
+
+        // Save original emissive color
         if (!hoveredObject.userData.originalEmissive) {
           hoveredObject.userData.originalEmissive =
             hoveredObject.material.emissive.clone();
         }
+
+        // Apply hover color
         hoveredObject.material.emissive.setHex(HOVER_COLOR);
+        hoveredObject.material.needsUpdate = true;
       }
     }
 
-    if (hoveredObject.material && hoveredObject.material.emissive) {
+    // Apply pulse effect
+    if (
+      hoveredObject &&
+      hoveredObject.material &&
+      hoveredObject.material.emissive
+    ) {
       const pulse = Math.sin(time * 5) * 0.1 + 0.3;
       hoveredObject.material.emissiveIntensity = pulse;
     }
@@ -225,7 +297,10 @@ function updateCrosshairInteraction(time) {
 }
 
 function resetObjectMaterial(object) {
-  if (!object.material || !object.material.emissive) return;
+  // Safety check: ensure object has material and emissive properties
+  if (!object || !object.material || !object.material.emissive) {
+    return;
+  }
 
   if (object.userData.originalEmissive) {
     object.material.emissive.copy(object.userData.originalEmissive);
@@ -244,6 +319,24 @@ function animate() {
   if (controller && controller.enabled) {
     controller.update(delta);
     updateCrosshairInteraction(time);
+
+    // Auto-play/pause Sumatra background music based on player position
+    const playerZ = controller.controls.getObject().position.z;
+    const sumatraMinZ = POSITIONS.Sumatra.z - 50;
+    const sumatraMaxZ = POSITIONS.Sumatra.z + 50;
+    const inSumatra = playerZ >= sumatraMinZ && playerZ <= sumatraMaxZ;
+
+    if (inSumatra && currentSection !== "Sumatra") {
+      // Player just entered Sumatra section
+      console.log("Entering Sumatra section - starting music");
+      currentSection = "Sumatra";
+      playSumatraMusic();
+    } else if (!inSumatra && currentSection === "Sumatra") {
+      // Player just left Sumatra section
+      console.log("Leaving Sumatra section - pausing music");
+      currentSection = null;
+      pauseSumatraMusic();
+    }
   }
 
   // Simple preview animation: rotate any model marked for preview.
