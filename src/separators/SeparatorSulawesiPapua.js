@@ -1,12 +1,12 @@
-import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import {
   SEPARATOR_BEND_SPAN,
   SEPARATOR_BEND_THICKNESS,
   WALL_THICKNESS,
 } from "../constants.js";
-import { createTextTexture } from "../utils/createTextTexture.js";
+import { createFramedSign } from "../utils/createFramedSign.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import * as THREE from "three";
 
 export function createSeparatorSulawesiPapua() {
   const separatorBlock = createBlock("SeparatorSulawesiPapua");
@@ -18,63 +18,28 @@ export function createSeparatorSulawesiPapua() {
   const xPositionLeft = -W / 2 - WALL_THICKNESS / 2;
   const zPosition = 0;
 
-  const planeWidth = D - 2; // e.g., 18 (This is the Z dimension in the world)
-  const planeHeight = 4; // (This is the Y dimension in the world)
+  const planeWidth = D - 2;
+  const planeHeight = 4;
 
-  // Use a ratio that matches the physical dimensions (18 width / 4 height = 4.5)
-  // We need a texture size that matches this aspect ratio, e.g., 512 x 113.7 (or 512x128 for power of 2)
-  const TEXTURE_WIDTH = 512;
-  const TEXTURE_HEIGHT = 128; // Close enough to the 4.5 aspect ratio
-
-  const planeGeo = new THREE.PlaneGeometry(planeWidth, planeHeight);
-
-  const sulawesiTexture = createTextTexture(
-    "SULAWESI",
-    TEXTURE_WIDTH,
-    TEXTURE_HEIGHT,
-    "white",
-    "blue"
-  );
-
-  const planeMatRight = new THREE.MeshBasicMaterial({
-    map: sulawesiTexture,
-    side: THREE.DoubleSide,
-    transparent: false,
-  });
-  const textMeshRight = new THREE.Mesh(planeGeo, planeMatRight);
-  textMeshRight.name = "WelcomeSignSulawesi";
-
-  textMeshRight.position.set(
-    xPositionRight - WALL_THICKNESS / 2 - 0.1,
+  // PAPUA SIGN (Right Side)
+  const papuaSign = createFramedSign("PAPUA", planeWidth, planeHeight, "./src/separators/pulau/pulau_papua.jpg");
+  papuaSign.position.set(
+    xPositionRight - WALL_THICKNESS / 2 - 0.3,
     5,
     zPosition
   );
-  textMeshRight.rotation.y = Math.PI / 2;
-  separatorBlock.add(textMeshRight);
+  papuaSign.rotation.y = -Math.PI / 2;
+  separatorBlock.add(papuaSign);
 
-  const papuaTexture = createTextTexture(
-    "PAPUA",
-    TEXTURE_WIDTH,
-    TEXTURE_HEIGHT,
-    "black",
-    "lime"
-  );
-
-  const planeMatLeft = new THREE.MeshBasicMaterial({
-    map: papuaTexture,
-    side: THREE.DoubleSide,
-    transparent: false,
-  });
-  const textMeshLeft = new THREE.Mesh(planeGeo, planeMatLeft);
-  textMeshLeft.name = "WelcomeSignPapua";
-
-  textMeshLeft.position.set(
-    xPositionLeft + WALL_THICKNESS / 2 + 0.1,
+  // SULAWESI SIGN (Left Side)
+  const sulawesiSign = createFramedSign("SULAWESI", planeWidth, planeHeight, "./src/separators/pulau/pulau_sulawesi.jpg");
+  sulawesiSign.position.set(
+    xPositionLeft + WALL_THICKNESS / 2 + 0.3,
     5,
     zPosition
   );
-  textMeshLeft.rotation.y = -Math.PI / 2;
-  separatorBlock.add(textMeshLeft);
+  sulawesiSign.rotation.y = Math.PI / 2;
+  separatorBlock.add(sulawesiSign);
 
   const textureLoader = new THREE.TextureLoader();
 

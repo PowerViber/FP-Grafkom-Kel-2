@@ -3,7 +3,8 @@ import * as THREE from "three";
 export const isWall = (child) => {
   return (
     child.isMesh &&
-    (!child.userData || !child.userData.isWalkable) &&
+    (!child.userData ||
+      (!child.userData.isWalkable && !child.userData.isSignPart)) &&
     child.geometry.type === "BoxGeometry" &&
     child.material.visible !== false
   );
