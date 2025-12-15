@@ -55,7 +55,7 @@ Aplikasi ini tidak hanya menampilkan satu situs, melainkan merangkum kekayaan bu
 | **Bingkai Foto** | `picture_frame.glb` | Properti Generik Dinding |
 | **Kain Gorden** | `curtain_fabric.glb` | Dekorasi Ruangan |
 
-## 📦 Sumber Model 3D & Aset
+## Sumber Model 3D & Aset
 
 Aset yang digunakan dalam proyek ini dikumpulkan dari berbagai sumber dan beberapa dikembangkan secara eksperimental:
 
@@ -72,7 +72,7 @@ Aset yang digunakan dalam proyek ini dikumpulkan dari berbagai sumber dan bebera
 
 ---
 
-## 🚀 Fitur yang Ditambahkan
+## Fitur yang Ditambahkan
 
 Berikut adalah fitur teknis dan interaktif yang telah diimplementasikan dalam sistem:
 
