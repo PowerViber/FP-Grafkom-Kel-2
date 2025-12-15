@@ -6,6 +6,7 @@ import BADIK_CONTENT from "../content/sulawesi_badik.js";
 import ADAT_TORAJA_CONTENT from "../content/sulawesi_adat_toraja.js";
 import KECAPI_CONTENT from "../content/sulawesi_kecapi.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { createPictureFrame } from "../utils/createPictureFrame.js";
 
 export function createSulawesi(clickableObjectsArray) {
   const sulawesiBlock = createBlock("Sulawesi");
@@ -126,6 +127,138 @@ export function createSulawesi(clickableObjectsArray) {
         child.material.needsUpdate = true;
       }
     }
+  });
+
+  // Kanan Tembok
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/sutrasengkang.jpg",
+    position: { x: 10, y: 5, z: -30 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+        <h3 class="text-2xl font-semibold mb-4">Sutra Sengkang</h3>
+        <p>Kain tenun sutra khas dari Sengkang, Kabupaten Wajo.</p>
+        <p>Motifnya yang unik dan warna-warni cerah menjadikannya simbol kebanggaan budaya Sulawesi Selatan.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/sultanhasanuddin.jpg",
+    position: { x: 10, y: 5, z: -15 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Sultan Hasanuddin</h3>
+      <p>Dijuluki "Ayam Jantan dari Timur", beliau adalah Raja Gowa ke-16 dan Pahlawan Nasional.</p>
+      <p>Beliau memimpin perlawanan gigih melawan VOC Belanda untuk mempertahankan kedaulatan kerajaan Gowa-Tallo.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/pohoneboni.jpg",
+    position: { x: 10, y: 5, z: 0 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Pohon Eboni</h3>
+      <p>Kayu hitam Sulawesi (<i>Diospyros celebica</i>), flora identitas Sulawesi Tengah.</p>
+      <p>Kayu ini sangat berharga karena teksturnya yang halus, keras, dan berwarna hitam legam, sering digunakan untuk ukiran dan furnitur mewah.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/mariawalanda.jpg",
+    position: { x: 10, y: 5, z: 15 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Maria Walanda Maramis</h3>
+      <p>Pahlawan pergerakan nasional dari Minahasa yang memperjuangkan emansipasi wanita.</p>
+      <p>Beliau mendirikan PIKAT (Percintaan Ibu Kepada Anak Temurunnya) untuk memajukan pendidikan kaum perempuan.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/tarikipaspakarena.jpg",
+    position: { x: 10, y: 5, z: 30 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Tari Kipas Pakarena</h3>
+      <p>Tarian tradisional dari Gowa yang mencerminkan kelembutan dan kesantunan wanita Gowa.</p>
+      <p>Gerakannya yang lembut kontras dengan irama gendang yang menggebu, menyimbolkan ketangguhan di balik kelembutan.</p>
+    `,
+  });
+
+  // Kiri Tembok
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/rumahtongkonan.jpeg",
+    position: { x: -10, y: 5, z: -30 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Rumah Tongkonan</h3>
+      <p>Rumah adat masyarakat Toraja dengan atap melengkung khas menyerupai perahu.</p>
+      <p>Tongkonan bukan sekadar tempat tinggal, tetapi pusat kehidupan sosial dan spiritual marga Toraja.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/samratulangi.jpg",
+    position: { x: -10, y: 5, z: -15 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Sam Ratulangi</h3>
+      <p>Dr. Gerungan Saul Samuel Jacob Ratulangi, Gubernur pertama Sulawesi dan pahlawan nasional.</p>
+      <p>Filsafatnya "Si Tou Timou Tumou Tou" (Manusia hidup untuk memanusiakan orang lain) menjadi landasan hidup masyarakat Minahasa.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/anoa.jpg",
+    position: { x: -10, y: 5, z: 0 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Anoa</h3>
+      <p>Satwa endemik Sulawesi yang dikenal sebagai sapi hutan kerdil.</p>
+      <p>Hewan ini dilindungi dan terancam punah, hidup di hutan hujan tropis Sulawesi.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/rambusolo.jpg",
+    position: { x: -10, y: 5, z: 15 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Rambu Solo</h3>
+      <p>Upacara pemakaman adat masyarakat Toraja yang sangat sakral dan meriah.</p>
+      <p>Bertujuan untuk mengantarkan arwah leluhur ke alam roh, seringkali melibatkan pengorbanan kerbau.</p>
+    `,
+  });
+
+  createPictureFrame(sulawesiBlock, {
+    image: "./src/assets/sulawesi_frame/tamannasionalbunaken.jpg",
+    position: { x: -10, y: 5, z: 30 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Taman Nasional Bunaken</h3>
+      <p>Taman laut yang terletak di Teluk Manado, terkenal dengan keanekaragaman hayati lautnya yang luar biasa.</p>
+      <p>Menjadi salah satu destinasi menyelam terbaik di dunia.</p>
+    `,
   });
 
   return sulawesiBlock;
