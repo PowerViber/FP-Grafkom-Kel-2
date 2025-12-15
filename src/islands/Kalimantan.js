@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { registerSound } from "../utils/audioManager.js";
+
+let kalimantanBackgroundMusic = null;
 
 export function createKalimantan() {
   const kalimantanBlock = createBlock("Kalimantan");
@@ -63,4 +66,22 @@ export function createKalimantan() {
   });
 
   return kalimantanBlock;
+}
+
+// Export functions to control background music
+export function playKalimantanMusic() {
+  if (kalimantanBackgroundMusic && kalimantanBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (kalimantanBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      kalimantanBackgroundMusic.play().catch(err => {
+        console.log("Sumatra music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pauseKalimantanMusic() {
+  if (kalimantanBackgroundMusic && !kalimantanBackgroundMusic.paused) {
+    kalimantanBackgroundMusic.pause();
+  }
 }

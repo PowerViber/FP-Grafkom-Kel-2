@@ -9,6 +9,7 @@ import RENDANG_CONTENT from "../content/sumatra_rendang.js";
 import MEUNASAH_CONTENT from "../content/sumatra_meunasah.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
+import { registerSound } from "../utils/audioManager.js";
 
 // Global reference to background music
 let sumatraBackgroundMusic = null;
@@ -19,7 +20,7 @@ export function createSumatra(clickableObjectsArray) {
   // Initialize background music with preload to prevent lag
   sumatraBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
   sumatraBackgroundMusic.loop = true;
-  sumatraBackgroundMusic.volume = 0.3;
+  registerSound(sumatraBackgroundMusic, 0.3);
   sumatraBackgroundMusic.preload = "auto";
 
   // Add error handler to prevent crashes

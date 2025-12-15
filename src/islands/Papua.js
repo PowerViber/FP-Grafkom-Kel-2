@@ -7,6 +7,9 @@ import FUU_CONTENT from "../content/papua_fuu.js";
 import TRITON_CONTENT from "../content/papua_triton.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
+import { registerSound } from "../utils/audioManager.js";
+
+let papuaBackgroundMusic = null;
 
 export function createPapua(clickableObjectsArray) {
   const papuaBlock = createBlock("Papua");
@@ -32,18 +35,21 @@ export function createPapua(clickableObjectsArray) {
       model: "./src/assets/papua_tifa.glb",
       content: TIFA_CONTENT,
       name: "Papua-Tifa",
+      inspect: { title: "Tifa", subtitle: "Type: Musical Instrument", audioPath: "./src/assets/papua_suara_tifa.mp3" }
     },
     {
       z: 0,
       model: "./src/assets/papua_fuu.glb",
       content: FUU_CONTENT,
       name: "Papua-Fuu",
+      inspect: { title: "Fuu", subtitle: "Type: Musical Instrument", audioPath: "./src/assets/papua_suara_fuu.mp3" }
     },
     {
       z: -10,
       model: "./src/assets/papua_triton.glb",
       content: TRITON_CONTENT,
       name: "Papua-Triton",
+      inspect: { title: "Triton", subtitle: "Type: Musical Instrument", audioPath: "./src/assets/papua_suara_triton.mp3" }
     },
   ];
 
@@ -63,12 +69,12 @@ export function createPapua(clickableObjectsArray) {
   loader.load("./src/assets/display_case.glb", (gltf) => {
     const baseModel = gltf.scene;
 
-    zPositions.forEach(({ z, model, content, name }) => {
+    zPositions.forEach(({ z, model, content, name,  inspect }) => {
       const displayCase = baseModel.clone();
       displayCase.scale.set(2.5, 2.5, 2.5);
       displayCase.position.set(xPosition, 0, z);
 
-      createClickableObject(model, content, clickableObjectsArray)
+      createClickableObject(model, content, clickableObjectsArray, inspect)
         .then((artifact) => {
           if (name.includes("Tifa")) {
             artifact.scale.set(0.3, 0.3, 0.3);
@@ -83,7 +89,6 @@ export function createPapua(clickableObjectsArray) {
             artifact.scale.set(7.5, 7.5, 7.5);
             artifact.position.set(0, 0.6, 0);
           }
-
           artifact.name = name;
           displayCase.add(artifact);
         })
@@ -271,3 +276,22 @@ export function createPapua(clickableObjectsArray) {
 
   return papuaBlock;
 }
+
+// Export functions to control background music
+export function playPapuaMusic() {
+  if (papuaBackgroundMusic && papuaBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (papuaBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      papuaBackgroundMusic.play().catch(err => {
+        console.log("Sumatra music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pausePapuaMusic() {
+  if (papuaBackgroundMusic && !papuaBackgroundMusic.paused) {
+    papuaBackgroundMusic.pause();
+  }
+}
+

@@ -23,7 +23,7 @@ export function showInspectMode(modelPath, title, subtitle, audioPath) {
     if (audioPath) {
         audioBtn.classList.remove("hidden");
         currentAudio = new Audio(audioPath);
-
+        registerSound(currentAudio, 1.0);
         audioBtn.onclick = () => {
             if (currentAudio.paused) {
                 currentAudio.play();

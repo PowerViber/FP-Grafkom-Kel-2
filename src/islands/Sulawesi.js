@@ -4,9 +4,44 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { createClickableObject } from "../utils/createClickableObject.js";
 import BADIK_CONTENT from "../content/sulawesi_badik.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import { registerSound } from "../utils/audioManager.js";
+
+let sulawesiBackgroundMusic = null;
 
 export function createSulawesi(clickableObjectsArray) {
+
   const sulawesiBlock = createBlock("Sulawesi");
+  
+  // Ganti jadi audio yang sesuai daerah kalian
+  sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_bgm.mp3");
+  sulawesiBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(sulawesiBackgroundMusic, 0.3);
+  sulawesiBackgroundMusic.preload = "auto";
+  
+  
+  // Add error handler to prevent crashes
+  sulawesiBackgroundMusic.addEventListener('error', (e) => {
+    console.error('Error loading Sulawesi background music:', e);
+  });
+
+  // Store reference in userData
+  sulawesiBlock.userData.backgroundMusic = sulawesiBackgroundMusic;
+
+  // Ganti jadi audio yang sesuai daerah kalian
+  sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_bgm.mp3");
+  sulawesiBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(sulawesiBackgroundMusic, 0.3);
+  sulawesiBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  sulawesiBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Sulawesi background music:", e);
+  });
+
+  // Store reference in userData
+  sulawesiBlock.userData.backgroundMusic = sulawesiBackgroundMusic;
 
   // Ganti jadi audio yang sesuai daerah kalian
   sulawesiBackgroundMusic = new Audio("./src/assets/sulawesi_bgm.mp3");
@@ -122,4 +157,22 @@ export function createSulawesi(clickableObjectsArray) {
   });
 
   return sulawesiBlock;
+}
+
+// Export functions to control background music
+export function playSulawesiMusic() {
+  if (sulawesiBackgroundMusic && sulawesiBackgroundMusic.paused) {
+    // Only play if audio is ready to prevent lag
+    if (sulawesiBackgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      sulawesiBackgroundMusic.play().catch(err => {
+        console.log("Sumatra music play failed:", err);
+      });
+    }
+  }
+}
+
+export function pauseSulawesiMusic() {
+  if (sulawesiBackgroundMusic && !sulawesiBackgroundMusic.paused) {
+    sulawesiBackgroundMusic.pause();
+  }
 }
