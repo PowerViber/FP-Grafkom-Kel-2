@@ -1,11 +1,11 @@
 const html = (s) => s[0];
 
 export default html`
-  <h3 class="text-2xl font-semibold mb-4">Sapek</h3>
+  <h3 class="text-2xl font-semibold mb-4">Sape' (Sampe)</h3>
+  <p>Alat musik petik tradisional Suku Dayak Kayaan dan Kenyah.</p>
   <p>
-    The Sapek (or Sampe) is a traditional lute of the Dayak people. 
-    It is plucked to produce soothing, meditative music often used in traditional ceremonies 
-    and dances. The body is carved from a single block of wood.
+    Bentuknya menyerupai perahu dengan ukiran motif Dayak yang khas. Suara
+    denting Sape' yang mendayu-dayu mampu mengekspresikan perasaan gembira,
+    rindu, maupun kesedihan yang mendalam.
   </p>
-  <p><em>Type: Musical Instrument</em></p>
 `;

@@ -1,11 +1,13 @@
 const html = (s) => s[0];
 
 export default html`
-  <h3 class="text-2xl font-semibold mb-4">Rebab</h3>
+  <h3 class="text-2xl font-semibold mb-4">Rebab Kalimantan</h3>
   <p>
-    The Rebab is a bowed string instrument used in various Indonesian musical genres, 
-    including those in Kalimantan. It often plays a melodic role in traditional ensembles 
-    and is essential in setting the mood of the performance.
+    Alat musik gesek yang merupakan hasil akulturasi budaya Timur Tengah dengan
+    budaya lokal Kalimantan Barat dan Selatan.
   </p>
-  <p><em>Type: Musical Instrument</em></p>
+  <p>
+    Memiliki 2-3 dawai, Rebab sering dimainkan dalam ansambel musik Mamanda atau
+    mengiringi seni tutur lisan masyarakat Banjar dan Melayu.
+  </p>
 `;
