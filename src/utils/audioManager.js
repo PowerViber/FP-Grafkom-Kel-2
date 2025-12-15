@@ -1,5 +1,5 @@
 // 1. Default Master Volume (1.0 = 100%)
-let masterVolume = 1.0;
+let masterVolume = 0.5;
 
 // 2. List to keep track of all sounds currently in the game
 // Structure: { source: AudioObject, baseVolume: Number }
@@ -13,7 +13,7 @@ const activeSounds = [];
 export function registerSound(audioObj, baseVolume = 1.0) {
   // Save the reference and its "intended" volume
   activeSounds.push({ source: audioObj, baseVolume: baseVolume });
-  
+
   // Set initial volume immediately based on current master volume
   audioObj.volume = baseVolume * masterVolume;
 }
@@ -37,7 +37,7 @@ export function setMasterVolume(value) {
  * Helper to play a sound safely
  */
 export function playSound(audioObj) {
-    if(audioObj.readyState >= 2) {
-        audioObj.play().catch(e => console.log("Audio play prevented:", e));
-    }
+  if (audioObj.readyState >= 2) {
+    audioObj.play().catch((e) => console.log("Audio play prevented:", e));
+  }
 }

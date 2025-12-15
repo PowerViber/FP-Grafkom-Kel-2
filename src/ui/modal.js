@@ -18,7 +18,8 @@ export function showModal(content, inspectData = null) {
           inspectData.modelPath,
           inspectData.title,
           inspectData.subtitle,
-          inspectData.audioPath
+          inspectData.audioPath,
+          inspectData.scale // Pass custom scale from inspectData
         );
       };
       modalContent.appendChild(inspectBtn);
