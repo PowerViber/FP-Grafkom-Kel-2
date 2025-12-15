@@ -1,113 +1,84 @@
 import * as THREE from "three";
 import { createBlock } from "../utils/createBlock.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { createClickableObject } from "../utils/createClickableObject.js";
+import TIFA_CONTENT from "../content/papua_tifa.js";
+import FUU_CONTENT from "../content/papua_fuu.js";
+import TRITON_CONTENT from "../content/papua_triton.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
-const textureLoader = new THREE.TextureLoader();
+import { createPictureFrame } from "../utils/createPictureFrame.js";
 
-export function createPapua() {
-  const papuaBlock = createBlock("Papua"); // Olive Green Floor
+export function createPapua(clickableObjectsArray) {
+  const papuaBlock = createBlock("Papua");
 
-  // TODO: Add decorations for Papua here, relative to the block's center (0, H/2, 0).
-  // 1. Define the positions you want
-  const zPositions = [35, 10, -25];
-  const xPosition = -7;
+  const zPositions = [
+    {
+      z: 10,
+      model: "./src/assets/papua_tifa.glb",
+      content: TIFA_CONTENT,
+      name: "Papua-Tifa",
+    },
+    {
+      z: 0,
+      model: "./src/assets/papua_fuu.glb",
+      content: FUU_CONTENT,
+      name: "Papua-Fuu",
+    },
+    {
+      z: -10,
+      model: "./src/assets/papua_triton.glb",
+      content: TRITON_CONTENT,
+      name: "Papua-Triton",
+    },
+  ];
 
-  zPositions.forEach((z) => {
-    // --- HITBOX ---
-    // Create a separate hitbox for each model
+  const xPosition = 0;
+
+  zPositions.forEach(({ z }) => {
     const hitbox = new THREE.Mesh(
       new THREE.BoxGeometry(5, 5, 5),
       new THREE.MeshBasicMaterial({ visible: false })
     );
-
-    // Make sure the hitbox matches the model's position
-    hitbox.position.set(xPosition, 0, z);
+    hitbox.position.set(xPosition, 2.5, z);
     papuaBlock.add(hitbox);
   });
 
   const loader = new GLTFLoader();
 
-  loader.load(
-    "./src/assets/display_case.glb",
-    (gltf) => {
-      const baseModel = gltf.scene;
+  loader.load("./src/assets/display_case.glb", (gltf) => {
+    const baseModel = gltf.scene;
 
-      // 2. Loop through each Z position
-      zPositions.forEach((z) => {
-        // --- VISUAL MODEL ---
-        // We use .clone() so we don't have to download the file 3 times
-        const modelClone = baseModel.clone();
-        modelClone.scale.set(3.5, 3.5, 3.5);
-        modelClone.position.set(xPosition, 0, z);
+    zPositions.forEach(({ z, model, content, name }) => {
+      const displayCase = baseModel.clone();
+      displayCase.scale.set(2.5, 2.5, 2.5);
+      displayCase.position.set(xPosition, 0, z);
 
-        if (z === 35) {
-          loader.load(
-            "./src/assets/african_drum.glb",
-            (drumGltf) => {
-              const drum = drumGltf.scene;
+      createClickableObject(model, content, clickableObjectsArray)
+        .then((artifact) => {
+          if (name.includes("Tifa")) {
+            artifact.scale.set(0.3, 0.3, 0.3);
+            artifact.position.set(0, 0.75, 0);
+            artifact.rotation.y = Math.PI / 2;
+          } else if (name.includes("Fuu")) {
+            artifact.scale.set(0.75, 0.75, 0.75);
+            artifact.position.set(0, 0.55, 0);
+            artifact.rotation.z = Math.PI / 2;
+            artifact.rotation.y = Math.PI / 2;
+          } else if (name.includes("Triton")) {
+            artifact.scale.set(7.5, 7.5, 7.5);
+            artifact.position.set(0, 0.6, 0);
+          }
 
-              drum.scale.set(0.3, 0.3, 0.3); // Scale relative to parent scale
-              drum.position.set(0, 0.5, 0); // Adjust Y to sit on surface
+          artifact.name = name;
+          displayCase.add(artifact);
+        })
+        .catch((error) =>
+          console.error(`Failed to load and wrap ${name}`, error)
+        );
 
-              modelClone.add(drum);
-            },
-            undefined,
-            (err) => console.error("Error loading Drum:", err)
-          );
-
-          loader.load(
-            "./src/assets/curtain_fabric.glb",
-            (fabricGltf) => {
-              const fabric = fabricGltf.scene;
-
-              // Modify fabric and add it to scene
-              fabric.scale.set(0.05, 0.05, 0.05);
-              fabric.position.set(-10.5, 0, z);
-              fabric.rotation.y = Math.PI / 2;
-              papuaBlock.add(fabric);
-
-              // Add texture to fabric
-              const fabricTexture = textureLoader.load(
-                "./src/assets/curtain_texture_1.jpg"
-              );
-              fabricTexture.flipY = false;
-              fabric.traverse((child) => {
-                if (child.isMesh) {
-                  child.material.map = fabricTexture;
-                  child.material.needsUpdate = true;
-                }
-              });
-            },
-            undefined,
-            (err) => console.error("Error loading Fabric:", err)
-          );
-        }
-
-        if (z === 10) {
-          loader.load(
-            "./src/assets/sea_shell.glb",
-            (seaShellGltf) => {
-              const sea_shell = seaShellGltf.scene;
-
-              sea_shell.scale.set(5, 5, 5); // Scale relative to parent scale
-              sea_shell.position.set(0, 0.5, 0); // Adjust Y to sit on surface
-              sea_shell.rotation.y = Math.PI;
-
-              modelClone.add(sea_shell);
-            },
-            undefined,
-            (err) => console.error("Error loading sea_shell:", err)
-          );
-        }
-
-        papuaBlock.add(modelClone);
-      });
-    },
-    undefined,
-    (error) => {
-      console.error("Error loading GLB:", error);
-    }
-  );
+      papuaBlock.add(displayCase);
+    });
+  });
 
   const textureLoader = new THREE.TextureLoader();
 
@@ -149,6 +120,138 @@ export function createPapua() {
         child.material.needsUpdate = true;
       }
     }
+  });
+
+  // Kanan Tembok
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/papeda.jpg",
+    position: { x: 10, y: 5, z: -30 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+          <h3 class="text-2xl font-semibold mb-4">Papeda</h3>
+          <p>Makanan pokok khas Papua dan Maluku yang terbuat dari sagu, berupa bubur kental berwarna putih bening dengan tekstur kenyal seperti lem, kaya karbohidrat dan serat, serta biasanya disajikan bersama lauk ikan kuah kuning atau sayuran seperti sayur daun melinjo atau ganemo.</p>
+          <p>Melambangkan kebersamaan dan kearifan lokal, sering disebut "Papua Penuh Damai" (Papua Penuh Damai).</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/ukiranasmat.jpg",
+    position: { x: 10, y: 5, z: -15 },
+    rotation: { x: Math.PI / 2, y: -Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Ukiran Asmat (Patung Mbis)</h3>
+      <p>Karya seni ukir kayu dari Suku Asmat yang telah mendunia.</p>
+      <p>Patung Mbis adalah tiang leluhur yang diukir bertingkat-tingkat, dipercaya sebagai tempat bersemayam roh nenek moyang dan simbol perlindungan bagi desa.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/belati.jpg",
+    position: { x: 10, y: 5, z: 0 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Belati Tulang Kasuari</h3>
+      <p>Senjata tradisional khas Papua yang terbuat dari tulang kaki burung Kasuari.</p>
+      <p>Hulu belati ini biasanya dihiasi dengan anyaman serat kulit kayu dan bulu burung kasuari. Selain untuk berburu, senjata ini juga memiliki nilai adat yang tinggi.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/franskaisiepo.jpg",
+    position: { x: 10, y: 5, z: 15 },
+    rotation: { x: Math.PI / 2, y: -Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+        <h3 class="text-2xl font-semibold mb-4">Frans Kaisiepo</h3>
+        <p>Pahlawan Nasional Indonesia dan Gubernur keempat Provinsi Papua.</p>
+        <p>Beliau terkenal dengan sikap nasionalismenya yang kuat, termasuk mengusulkan nama "Irian" (Ikut Republik Indonesia Anti-Nederland) pada Konferensi Malino 1946 untuk menggantikan nama Papua Belanda.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/noken.jpg",
+    position: { x: 10, y: 5, z: 30 },
+    rotation: { x: 0, y: -Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Noken</h3>
+      <p>Tas tradisional Papua yang dianyam dari serat kulit kayu.</p>
+      <p>Diakui UNESCO sebagai Warisan Budaya Takbenda, Noken melambangkan kehidupan yang baik, perdamaian, dan kesuburan. Cara membawanya yang unik adalah dengan digantungkan di kepala.</p>
+      `,
+  });
+
+  // Kiri Tembok
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/honai.jpg",
+    position: { x: -10, y: 5, z: -30 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Rumah Honai</h3>
+      <p>Rumah adat khas Suku Dani di Lembah Baliem.</p>
+      <p>Berbentuk bundar dengan atap kerucut dari jerami, desain mungil tanpa jendela ini bertujuan untuk menahan hawa dingin pegunungan dan menjaga kehangatan api unggun di dalamnya.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/cendrawasih.jpg",
+    position: { x: -10, y: 5, z: -15 },
+    rotation: { x: -Math.PI / 2, y: Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Burung Cenderawasih</h3>
+      <p>Dikenal sebagai "Bird of Paradise" karena keindahan bulunya yang luar biasa.</p>
+      <p>Burung endemik Papua ini memiliki peran penting dalam ekosistem hutan hujan tropis dan menjadi simbol kebanggaan identitas masyarakat Papua.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/puncakjaya.jpg",
+    position: { x: -10, y: 5, z: 0 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Puncak Jaya (Carstensz Pyramid)</h3>
+      <p>Puncak tertinggi di Indonesia (4.884 mdpl) dan merupakan bagian dari Pegunungan Jayawijaya.</p>
+      <p>Keunikan utamanya adalah gletser tropis atau "salju abadi" yang menyelimuti puncaknya, sebuah fenomena alam yang sangat langka di negara khatulistiwa.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/silaspapare.jpg",
+    position: { x: -10, y: 5, z: 15 },
+    rotation: { x: -Math.PI / 2, y: Math.PI / 2, z: 0 },
+    scale: 3,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Silas Papare</h3>
+      <p>Pejuang kemerdekaan Indonesia dari Serui, Papua.</p>
+      <p>Beliau mendirikan Partai Kemerdekaan Indonesia Irian (PKII) dan gigih berjuang baik melalui jalur politik maupun gerilya untuk mengusir Belanda dan menyatukan Papua ke dalam pangkuan Ibu Pertiwi.</p>
+      `,
+  });
+
+  createPictureFrame(papuaBlock, {
+    image: "./src/assets/papua_frame/rajaampat.jpg",
+    position: { x: -10, y: 5, z: 30 },
+    rotation: { x: 0, y: Math.PI / 2, z: 0 },
+    scale: 4,
+    clickableObjects: clickableObjectsArray,
+    modalContent: `
+      <h3 class="text-2xl font-semibold mb-4">Kepulauan Raja Ampat</h3>
+      <p>Gugusan kepulauan di Papua Barat yang dikenal sebagai salah satu pusat keanekaragaman hayati laut terkaya di dunia.</p>
+      <p>Nama "Raja Ampat" berasal dari mitos lokal tentang empat raja yang menetas dari telur naga dan memerintah empat pulau utama: Waigeo, Batanta, Salawati, dan Misool.</p>
+      `,
   });
 
   return papuaBlock;
