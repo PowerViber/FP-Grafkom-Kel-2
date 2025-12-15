@@ -11,6 +11,21 @@ import { createPictureFrame } from "../utils/createPictureFrame.js";
 export function createPapua(clickableObjectsArray) {
   const papuaBlock = createBlock("Papua");
 
+  // Ganti jadi audio yang sesuai daerah kalian
+  papuaBackgroundMusic = new Audio("./src/assets/papua_bgm.mp3");
+  papuaBackgroundMusic.loop = true;
+  //Ganti volume default daerah kalian disini
+  registerSound(papuaBackgroundMusic, 0.3);
+  papuaBackgroundMusic.preload = "auto";
+
+  // Add error handler to prevent crashes
+  papuaBackgroundMusic.addEventListener("error", (e) => {
+    console.error("Error loading Papua background music:", e);
+  });
+
+  // Store reference in userData
+  papuaBlock.userData.backgroundMusic = papuaBackgroundMusic;
+
   const zPositions = [
     {
       z: 10,
