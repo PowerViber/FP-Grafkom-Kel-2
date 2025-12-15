@@ -1,12 +1,12 @@
-import * as THREE from "three";
+import { createBlock } from "../utils/createBlock.js";
 import {
   SEPARATOR_BEND_SPAN,
   SEPARATOR_BEND_THICKNESS,
   WALL_THICKNESS,
 } from "../constants.js";
-import { createBlock } from "../utils/createBlock.js";
-import { createTextTexture } from "../utils/createTextTexture.js";
+import { createFramedSign } from "../utils/createFramedSign.js";
 import { applyWallTexture, isWall } from "../utils/wallHelper.js";
+import * as THREE from "three";
 
 export function createSeparatorSumatraJawa() {
   const separatorBlock = createBlock("SeparatorSumatraJawa");
@@ -21,58 +21,25 @@ export function createSeparatorSumatraJawa() {
   const planeWidth = D - 2;
   const planeHeight = 4;
 
-  const TEXTURE_WIDTH = 512;
-  const TEXTURE_HEIGHT = 128;
-
-  const planeGeo = new THREE.PlaneGeometry(planeWidth, planeHeight);
-
-  const jawaTexture = createTextTexture(
-    "JAWA",
-    TEXTURE_WIDTH,
-    TEXTURE_HEIGHT,
-    "white",
-    "blue"
-  );
-
-  const planeMatRight = new THREE.MeshBasicMaterial({
-    map: jawaTexture,
-    side: THREE.DoubleSide,
-    transparent: false,
-  });
-  const textMeshRight = new THREE.Mesh(planeGeo, planeMatRight);
-  textMeshRight.name = "WelcomeSignJawa";
-
-  textMeshRight.position.set(
-    xPositionRight - WALL_THICKNESS / 2 - 0.1,
+  // JAWA SIGN (Right Side)
+  const jawaSign = createFramedSign("JAWA", planeWidth, planeHeight, "./src/separators/pulau/pulau_jawa.jpg");
+  jawaSign.position.set(
+    xPositionRight - WALL_THICKNESS / 2 - 0.3,
     5,
     zPosition
   );
-  textMeshRight.rotation.y = Math.PI / 2;
-  separatorBlock.add(textMeshRight);
+  jawaSign.rotation.y = -Math.PI / 2;
+  separatorBlock.add(jawaSign);
 
-  const sumatraTexture = createTextTexture(
-    "SUMATRA",
-    TEXTURE_WIDTH,
-    TEXTURE_HEIGHT,
-    "black",
-    "lime"
-  );
-
-  const planeMatLeft = new THREE.MeshBasicMaterial({
-    map: sumatraTexture,
-    side: THREE.DoubleSide,
-    transparent: false,
-  });
-  const textMeshLeft = new THREE.Mesh(planeGeo, planeMatLeft);
-  textMeshLeft.name = "WelcomeSignSumatra";
-
-  textMeshLeft.position.set(
-    xPositionLeft + WALL_THICKNESS / 2 + 0.1,
+  // SUMATRA SIGN (Left Side)
+  const sumatraSign = createFramedSign("SUMATRA", planeWidth, planeHeight, "./src/separators/pulau/pulau_sumatra.jpg");
+  sumatraSign.position.set(
+    xPositionLeft + WALL_THICKNESS / 2 + 0.3,
     5,
     zPosition
   );
-  textMeshLeft.rotation.y = -Math.PI / 2;
-  separatorBlock.add(textMeshLeft);
+  sumatraSign.rotation.y = Math.PI / 2;
+  separatorBlock.add(sumatraSign);
 
   const textureLoader = new THREE.TextureLoader();
 
