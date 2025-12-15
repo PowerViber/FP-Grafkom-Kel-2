@@ -11,24 +11,20 @@ import { applyWallTexture, isWall } from "../utils/wallHelper.js";
 import { createPictureFrame } from "../utils/createPictureFrame.js";
 import { registerSound } from "../utils/audioManager.js";
 
-// Global reference to background music
 let sumatraBackgroundMusic = null;
 
 export function createSumatra(clickableObjectsArray) {
   const sumatraBlock = createBlock("Sumatra");
 
-  // Initialize background music with preload to prevent lag
   sumatraBackgroundMusic = new Audio("./src/assets/sumatra_pariaman.mp3");
   sumatraBackgroundMusic.loop = true;
   registerSound(sumatraBackgroundMusic, 0.3);
   sumatraBackgroundMusic.preload = "auto";
 
-  // Add error handler to prevent crashes
   sumatraBackgroundMusic.addEventListener("error", (e) => {
     console.error("Error loading Sumatra background music:", e);
   });
 
-  // Store reference in userData
   sumatraBlock.userData.backgroundMusic = sumatraBackgroundMusic;
 
   const zPositions = [
@@ -43,8 +39,8 @@ export function createSumatra(clickableObjectsArray) {
         audioPath: null,
       },
       scale: { x: 2.4, y: 2.4, z: 2.4 },
-      position: { x: 0, y: 0.55, z: 0 },
-      rotation: { x: Math.PI / 4, y: 0, z: 0 }, // 45 degrees tilt forward
+      position: { x: 0, y: 0.35, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
     },
     {
       z: 10,

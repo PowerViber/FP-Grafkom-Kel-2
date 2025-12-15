@@ -7,7 +7,6 @@ export function showModal(content, inspectData = null) {
   if (modalContainer) {
     modalContent.innerHTML = content;
 
-    // Add Inspect button if inspectData provided
     if (inspectData) {
       const inspectBtn = document.createElement("button");
       inspectBtn.textContent = "Inspect";
@@ -20,7 +19,8 @@ export function showModal(content, inspectData = null) {
           inspectData.title,
           inspectData.subtitle,
           inspectData.audioPath,
-          inspectData.scale // Pass custom scale from inspectData
+          inspectData.scale,
+          inspectData.interactiveConfig
         );
       };
       modalContent.appendChild(inspectBtn);

@@ -128,15 +128,9 @@ export function createSulawesi(clickableObjectsArray) {
       createClickableObject(model, content, clickableObjectsArray, inspectData)
         .then((artifact) => {
           if (name.includes("Badik")) {
-            // --- AREA DEBUGGING ---
-
             artifact.rotation.set(0, 0, 0);
-
             artifact.scale.set(15, 15, 15);
-
             artifact.position.set(0, 0.2, 0);
-
-            console.log("Badik loaded:", artifact);
           } else if (name.includes("Adat-Toraja")) {
             artifact.scale.set(3.0, 3.0, 3.0);
             artifact.position.set(0, 0.8, 0);
@@ -147,20 +141,20 @@ export function createSulawesi(clickableObjectsArray) {
             artifact.rotation.set(0, Math.PI, Math.PI / 2);
           } else if (name.includes("Jalappa")) {
             artifact.scale.set(0.01, 0.01, 0.01);
-            artifact.position.set(0, 0.5, 0);
+            artifact.position.set(-0.25, 0.5, -0.1);
             artifact.rotation.set(0, Math.PI / 2, 0);
             artifact.traverse((child) => {
               if (child.isMesh) {
-                child.material.side = THREE.DoubleSide; // Ensure visibility
+                child.material.side = THREE.DoubleSide;
               }
             });
           } else if (name.includes("Puikpuik")) {
-            artifact.scale.set(0.01, 0.01, 0.01);
+            artifact.scale.set(0.02, 0.02, 0.02);
             artifact.position.set(0, 0.55, 0);
             artifact.rotation.set(0, Math.PI / 2, 0);
             artifact.traverse((child) => {
               if (child.isMesh) {
-                child.material.side = THREE.DoubleSide; // Ensure visibility
+                child.material.side = THREE.DoubleSide;
               }
             });
           }
